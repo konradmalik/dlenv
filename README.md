@@ -2,7 +2,7 @@
 
 Container for ML, AI, Deep Learning, reinforcement learning etc.
 
-Inspired by <https://github.com/ufoym/deepo>
+Inspired by <https://github.com/ufoym/deepo> but modified to my liking.
 
 Build container using "make":
 
