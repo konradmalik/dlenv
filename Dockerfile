@@ -1,0 +1,167 @@
+# ==================================================================
+# module list
+# ------------------------------------------------------------------
+# python        3.6    (apt)
+# jupyter       latest (pip)
+# pytorch       latest (pip)
+# tensorflow    latest (pip)
+# keras         latest (pip)
+# opencv        4.1.0  (git)
+# OpenAI gym    
+# ==================================================================
+
+FROM ubuntu:18.04
+ENV LANG C.UTF-8
+ENV APT_INSTALL="apt-get install -y --no-install-recommends"
+ENV PIP_INSTALL="python -m pip --no-cache-dir install --upgrade"
+ENV GIT_CLONE="git clone --depth 10"
+
+RUN rm -rf /var/lib/apt/lists/* \
+           /etc/apt/sources.list.d/cuda.list \
+           /etc/apt/sources.list.d/nvidia-ml.list && \
+    apt-get update
+
+# ==================================================================
+# tools
+# ------------------------------------------------------------------
+
+RUN DEBIAN_FRONTEND=noninteractive $APT_INSTALL \
+        build-essential \
+        apt-utils \
+        ca-certificates \
+        wget \
+        git \
+        vim \
+        curl \
+        unzip \
+        unrar \
+        cmake 
+
+# ==================================================================
+# python
+# ------------------------------------------------------------------
+
+RUN DEBIAN_FRONTEND=noninteractive $APT_INSTALL \
+        software-properties-common \
+        && \
+    add-apt-repository ppa:deadsnakes/ppa && \
+    apt-get update && \
+    DEBIAN_FRONTEND=noninteractive $APT_INSTALL \
+        python3.6 \
+        python3.6-dev \
+        python3-distutils-extra \
+        && \
+    wget -O ~/get-pip.py \
+        https://bootstrap.pypa.io/get-pip.py && \
+    python3.6 ~/get-pip.py && \
+    ln -s /usr/bin/python3.6 /usr/local/bin/python3 && \
+    ln -s /usr/bin/python3.6 /usr/local/bin/python && \
+    $PIP_INSTALL \
+        setuptools \
+        && \
+    $PIP_INSTALL \
+        numpy \
+        scipy \
+        pandas \
+        cloudpickle \
+        scikit-learn \
+        matplotlib \
+        Cython 
+
+# ==================================================================
+# jupyter
+# ------------------------------------------------------------------
+
+RUN $PIP_INSTALL \
+        jupyter
+
+# ==================================================================
+# pytorch
+# ------------------------------------------------------------------
+
+RUN $PIP_INSTALL \
+    	https://download.pytorch.org/whl/cpu/torch-1.1.0-cp36-cp36m-linux_x86_64.whl && \
+    $PIP_INSTALL \
+        https://download.pytorch.org/whl/cpu/torchvision-0.3.0-cp36-cp36m-linux_x86_64.whl
+
+# ==================================================================
+# tensorflow
+# ------------------------------------------------------------------
+
+RUN $PIP_INSTALL \
+        tensorflow==2.0.0-beta1
+
+# ==================================================================
+# keras
+# ------------------------------------------------------------------
+
+RUN $PIP_INSTALL \
+        h5py \
+        keras
+
+# ==================================================================
+# opencv
+# ------------------------------------------------------------------
+
+RUN DEBIAN_FRONTEND=noninteractive $APT_INSTALL \
+        libatlas-base-dev \
+        libgflags-dev \
+        libgoogle-glog-dev \
+        libhdf5-serial-dev \
+        libleveldb-dev \
+        liblmdb-dev \
+        libprotobuf-dev \
+        libsnappy-dev \
+        protobuf-compiler \
+        && \
+
+    $GIT_CLONE --branch 4.1.0 https://github.com/opencv/opencv ~/opencv && \
+    mkdir -p ~/opencv/build && cd ~/opencv/build && \
+    cmake -D CMAKE_BUILD_TYPE=RELEASE \
+          -D CMAKE_INSTALL_PREFIX=/usr/local \
+          -D WITH_IPP=OFF \
+          -D WITH_CUDA=OFF \
+          -D WITH_OPENCL=OFF \
+          -D BUILD_TESTS=OFF \
+          -D BUILD_PERF_TESTS=OFF \
+          .. && \
+    make -j"$(nproc)" install && \
+    ln -s /usr/local/include/opencv4/opencv2 /usr/local/include/opencv2
+
+# ==================================================================
+# OpenAI GYM
+# ------------------------------------------------------------------
+
+RUN DEBIAN_FRONTEND=noninteractive $APT_INSTALL \
+        python3-dev \
+        zlib1g-dev \
+        libjpeg-dev \
+        cmake \
+        swig \
+        python-pyglet \
+        python3-opengl \
+        libboost-all-dev \
+        libsdl2-dev \
+        libosmesa6-dev \
+        patchelf \
+        ffmpeg \
+        xvfb \
+        && \
+
+    $PIP_INSTALL \
+		'gym[algorithmic]' \
+		'gym[atari]' \
+		'gym[box2d]' \
+		'gym[classic_control]' \
+		'gym[toy_text]'
+    
+# ==================================================================
+# config & cleanup
+# ------------------------------------------------------------------
+
+RUN ldconfig && \
+    apt-get clean && \
+    apt-get autoremove && \
+    rm -rf /var/lib/apt/lists/* /tmp/* ~/*
+
+EXPOSE 8888 6006
