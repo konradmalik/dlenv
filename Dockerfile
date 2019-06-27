@@ -4,10 +4,10 @@
 # python        3.6    (apt)
 # jupyter       latest (pip)
 # pytorch       latest (pip)
+# ax            latest (pip)
 # tensorflow    latest (pip)
-# keras         latest (pip)
 # opencv        4.1.0  (git)
-# OpenAI gym    
+# OpenAI gym    latest (pip)
 # ==================================================================
 
 FROM ubuntu:18.04
@@ -66,7 +66,8 @@ RUN DEBIAN_FRONTEND=noninteractive $APT_INSTALL \
         cloudpickle \
         scikit-learn \
         matplotlib \
-        Cython 
+        Cython \
+        h5py
 
 # ==================================================================
 # jupyter
@@ -83,6 +84,13 @@ RUN $PIP_INSTALL \
     	https://download.pytorch.org/whl/cpu/torch-1.1.0-cp36-cp36m-linux_x86_64.whl && \
     $PIP_INSTALL \
         https://download.pytorch.org/whl/cpu/torchvision-0.3.0-cp36-cp36m-linux_x86_64.whl
+        
+# ==================================================================
+# ax
+# ------------------------------------------------------------------
+        
+RUN $PIP_INSTALL \
+        ax-platform
 
 # ==================================================================
 # tensorflow
@@ -90,14 +98,6 @@ RUN $PIP_INSTALL \
 
 RUN $PIP_INSTALL \
         tensorflow==2.0.0-beta1
-
-# ==================================================================
-# keras
-# ------------------------------------------------------------------
-
-RUN $PIP_INSTALL \
-        h5py \
-        keras
 
 # ==================================================================
 # opencv
