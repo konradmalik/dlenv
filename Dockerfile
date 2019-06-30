@@ -9,6 +9,7 @@
 # opencv        4.1.0  (git)
 # OpenAI gym    latest (pip)
 # MLflow		latest (pip)
+# Spark/pySpark 2.4.3  (apt+pip)
 # ==================================================================
 
 FROM ubuntu:18.04
@@ -162,6 +163,24 @@ RUN DEBIAN_FRONTEND=noninteractive $APT_INSTALL \
 
 RUN $PIP_INSTALL \
 		mlflow
+
+# ==================================================================
+# Spark
+# ------------------------------------------------------------------
+
+ARG SPARK_ARCHIVE=https://www-eu.apache.org/dist/spark/spark-2.4.3/spark-2.4.3-bin-hadoop2.7.tgz
+RUN curl -s $SPARK_ARCHIVE | tar -xz -C /usr/local/
+
+ENV SPARK_HOME /usr/local/spark-2.4.3-bin-hadoop2.7
+ENV PATH $PATH:$SPARK_HOME/bin
+
+RUN DEBIAN_FRONTEND=noninteractive $APT_INSTALL \
+        openjdk-8-jdk \
+        && \
+
+    $PIP_INSTALL \
+		pyspark \
+		findspark
 
 # ==================================================================
 # config & cleanup
