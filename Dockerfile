@@ -176,6 +176,7 @@ ENV PATH $PATH:$SPARK_HOME/bin
 
 RUN DEBIAN_FRONTEND=noninteractive $APT_INSTALL \
         openjdk-8-jdk \
+		scala \
         && \
 
     $PIP_INSTALL \
