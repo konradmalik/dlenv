@@ -8,6 +8,7 @@
 # tensorflow    latest (pip)
 # opencv        4.1.0  (git)
 # OpenAI gym    latest (pip)
+# MLflow		latest (pip)
 # ==================================================================
 
 FROM ubuntu:18.04
@@ -35,7 +36,7 @@ RUN DEBIAN_FRONTEND=noninteractive $APT_INSTALL \
         curl \
         unzip \
         unrar \
-        cmake 
+        cmake
 
 # ==================================================================
 # python
@@ -155,6 +156,13 @@ RUN DEBIAN_FRONTEND=noninteractive $APT_INSTALL \
 		'gym[classic_control]' \
 		'gym[toy_text]'
     
+# ==================================================================
+# MLflow 
+# ------------------------------------------------------------------
+
+RUN $PIP_INSTALL \
+		mlflow
+
 # ==================================================================
 # config & cleanup
 # ------------------------------------------------------------------
