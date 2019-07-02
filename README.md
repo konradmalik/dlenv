@@ -4,6 +4,8 @@ Container for ML, AI, Deep Learning, reinforcement learning etc.
 
 Inspired by <https://github.com/ufoym/deepo> but modified to my liking.
 
+If you are not familiar with VIM/do not want VIM-like bindings in jupyter, then you need to delete Dockerfile lines marked as "jupyter vim bindings".
+
 Build container using "make":
 
 ```bash
