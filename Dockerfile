@@ -2,7 +2,7 @@
 # module list
 # ------------------------------------------------------------------
 # python        3.6    (apt)
-# jupyter       latest (pip)
+# jupyter       latest (pip) - with vim binding, remove this if you are not familiar with VIM
 # pytorch       latest (pip)
 # ax            latest (pip)
 # tensorflow    latest (pip)
@@ -76,7 +76,19 @@ RUN DEBIAN_FRONTEND=noninteractive $APT_INSTALL \
 # ------------------------------------------------------------------
 
 RUN $PIP_INSTALL \
-        jupyter
+        jupyter \
+        && \
+
+# ==================================================================
+# jupyter vim binding
+# ------------------------------------------------------------------
+    # Create required directory in case (optional)
+    mkdir -p $(jupyter --data-dir)/nbextensions && \
+    # Clone the repository
+    cd $(jupyter --data-dir)/nbextensions && \
+    git clone https://github.com/lambdalisue/jupyter-vim-binding vim_binding && \
+    # Activate the extension
+    jupyter nbextension enable vim_binding/vim_binding
 
 # ==================================================================
 # pytorch
