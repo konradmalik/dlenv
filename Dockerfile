@@ -67,6 +67,7 @@ RUN DEBIAN_FRONTEND=noninteractive $APT_INSTALL \
         pandas \
         cloudpickle \
         scikit-learn \
+		joblib \
         matplotlib \
         Cython \
         h5py
