@@ -37,7 +37,8 @@ RUN DEBIAN_FRONTEND=noninteractive $APT_INSTALL \
         curl \
         unzip \
         unrar \
-        cmake
+        cmake \
+		nano
 
 # ==================================================================
 # python
@@ -176,7 +177,13 @@ RUN DEBIAN_FRONTEND=noninteractive $APT_INSTALL \
 
 RUN $PIP_INSTALL \
 		mlflow && \
-		sed -i 's/127.0.0.1/0.0.0.0/g' /usr/local/lib/python3.6/dist-packages/mlflow/cli.py
+		sed -i 's/127.0.0.1/0.0.0.0/g' /usr/local/lib/python3.6/dist-packages/mlflow/cli.py && \
+		wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda.sh && \
+    	/bin/bash ~/miniconda.sh -b -p /opt/conda && \
+    	rm ~/miniconda.sh && \
+    	ln -s /opt/conda/etc/profile.d/conda.sh /etc/profile.d/conda.sh && \
+    	echo ". /opt/conda/etc/profile.d/conda.sh" >> ~/.bashrc && \
+    	echo "conda activate base" >> ~/.bashrc
 
 # ==================================================================
 # Spark
@@ -206,4 +213,4 @@ RUN ldconfig && \
     apt-get autoremove && \
     rm -rf /var/lib/apt/lists/* /tmp/* ~/*
 
-EXPOSE 8888 6006
+EXPOSE 8888 6006 5000
