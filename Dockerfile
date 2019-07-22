@@ -175,7 +175,8 @@ RUN DEBIAN_FRONTEND=noninteractive $APT_INSTALL \
 # ------------------------------------------------------------------
 
 RUN $PIP_INSTALL \
-		mlflow
+		mlflow && \
+		sed -i 's/127.0.0.1/0.0.0.0/g' /usr/local/lib/python3.6/dist-packages/mlflow/cli.py
 
 # ==================================================================
 # Spark
