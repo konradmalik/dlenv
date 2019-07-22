@@ -182,8 +182,7 @@ RUN $PIP_INSTALL \
     	/bin/bash ~/miniconda.sh -b -p /opt/conda && \
     	rm ~/miniconda.sh && \
     	ln -s /opt/conda/etc/profile.d/conda.sh /etc/profile.d/conda.sh && \
-    	echo ". /opt/conda/etc/profile.d/conda.sh" >> ~/.bashrc && \
-    	echo "conda activate base" >> ~/.bashrc
+    	echo ". /opt/conda/etc/profile.d/conda.sh" >> ~/.bashrc 
 
 # ==================================================================
 # Spark
