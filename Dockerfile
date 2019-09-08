@@ -1,22 +1,23 @@
 # ==================================================================
 # module list
 # ------------------------------------------------------------------
-# python        3.6    (apt)
+# python        3.7    (apt)
 # jupyter lab   latest (pip)
 # pytorch       latest (pip)
 # ax            latest (pip)
 # tensorflow    latest (pip)
-# opencv        4.1.0  (git)
+# opencv        4.1.1  (git)
 # OpenAI gym    latest (pip)
 # MLflow		latest (pip)
-# Spark/pySpark 2.4.3  (apt+pip)
+# Spark/pySpark 2.4.4  (apt+pip)
 # ==================================================================
 
 FROM ubuntu:18.04
 ENV LANG C.UTF-8
-ENV APT_INSTALL="apt-get install -y --no-install-recommends"
+ENV APT_INSTALL="apt-get install -y --no-install-recommends --fix-missing"
 ENV PIP_INSTALL="python -m pip --no-cache-dir install --upgrade"
 ENV GIT_CLONE="git clone --depth 10"
+ENV PYTHON_COMPAT_VERSION=3.7
 
 RUN rm -rf /var/lib/apt/lists/* \
            /etc/apt/sources.list.d/cuda.list \
@@ -38,27 +39,27 @@ RUN DEBIAN_FRONTEND=noninteractive $APT_INSTALL \
         unzip \
         unrar \
         cmake \
-		nano
+		nano \
+		tmux
 
 # ==================================================================
 # python
 # ------------------------------------------------------------------
-
 RUN DEBIAN_FRONTEND=noninteractive $APT_INSTALL \
         software-properties-common \
         && \
     add-apt-repository ppa:deadsnakes/ppa && \
     apt-get update && \
     DEBIAN_FRONTEND=noninteractive $APT_INSTALL \
-        python3.6 \
-        python3.6-dev \
+        python${PYTHON_COMPAT_VERSION} \
+        python${PYTHON_COMPAT_VERSION}-dev \
         python3-distutils-extra \
         && \
     wget -O ~/get-pip.py \
         https://bootstrap.pypa.io/get-pip.py && \
-    python3.6 ~/get-pip.py && \
-    ln -s /usr/bin/python3.6 /usr/local/bin/python3 && \
-    ln -s /usr/bin/python3.6 /usr/local/bin/python && \
+    python${PYTHON_COMPAT_VERSION} ~/get-pip.py && \
+    ln -s /usr/bin/python${PYTHON_COMPAT_VERSION} /usr/local/bin/python3 && \
+    ln -s /usr/bin/python${PYTHON_COMPAT_VERSION} /usr/local/bin/python && \
     $PIP_INSTALL \
         setuptools \
         && \
@@ -85,9 +86,7 @@ RUN $PIP_INSTALL \
 # ------------------------------------------------------------------
 
 RUN $PIP_INSTALL \
-    	https://download.pytorch.org/whl/cpu/torch-1.1.0-cp36-cp36m-linux_x86_64.whl && \
-    $PIP_INSTALL \
-        https://download.pytorch.org/whl/cpu/torchvision-0.3.0-cp36-cp36m-linux_x86_64.whl
+		torch==1.2.0+cpu torchvision==0.4.0+cpu -f https://download.pytorch.org/whl/torch_stable.html
         
 # ==================================================================
 # ax
@@ -101,7 +100,7 @@ RUN $PIP_INSTALL \
 # ------------------------------------------------------------------
 
 RUN $PIP_INSTALL \
-        tensorflow==2.0.0-beta1
+        tensorflow==2.0.0-rc0
 
 # ==================================================================
 # opencv
@@ -118,8 +117,7 @@ RUN DEBIAN_FRONTEND=noninteractive $APT_INSTALL \
         libsnappy-dev \
         protobuf-compiler \
         && \
-
-    $GIT_CLONE --branch 4.1.0 https://github.com/opencv/opencv ~/opencv && \
+    $GIT_CLONE --branch 4.1.1 https://github.com/opencv/opencv ~/opencv && \
     mkdir -p ~/opencv/build && cd ~/opencv/build && \
     cmake -D CMAKE_BUILD_TYPE=RELEASE \
           -D CMAKE_INSTALL_PREFIX=/usr/local \
@@ -151,7 +149,6 @@ RUN DEBIAN_FRONTEND=noninteractive $APT_INSTALL \
         ffmpeg \
         xvfb \
         && \
-
     $PIP_INSTALL \
 		'gym[algorithmic]' \
 		'gym[atari]' \
@@ -165,7 +162,7 @@ RUN DEBIAN_FRONTEND=noninteractive $APT_INSTALL \
 
 RUN $PIP_INSTALL \
 		mlflow && \
-		sed -i 's/127.0.0.1/0.0.0.0/g' /usr/local/lib/python3.6/dist-packages/mlflow/cli.py && \
+		sed -i 's/127.0.0.1/0.0.0.0/g' /usr/local/lib/python${PYTHON_COMPAT_VERSION}/dist-packages/mlflow/cli.py && \
 		wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda.sh && \
     	/bin/bash ~/miniconda.sh -b -p /opt/conda && \
     	rm ~/miniconda.sh && \
@@ -176,17 +173,16 @@ RUN $PIP_INSTALL \
 # Spark
 # ------------------------------------------------------------------
 
-ARG SPARK_ARCHIVE=https://www-eu.apache.org/dist/spark/spark-2.4.3/spark-2.4.3-bin-hadoop2.7.tgz
+ARG SPARK_ARCHIVE=https://www-eu.apache.org/dist/spark/spark-2.4.4/spark-2.4.4-bin-hadoop2.7.tgz
 RUN curl -s $SPARK_ARCHIVE | tar -xz -C /usr/local/
 
-ENV SPARK_HOME /usr/local/spark-2.4.3-bin-hadoop2.7
+ENV SPARK_HOME /usr/local/spark-2.4.4-bin-hadoop2.7
 ENV PATH $PATH:$SPARK_HOME/bin
 
 RUN DEBIAN_FRONTEND=noninteractive $APT_INSTALL \
         openjdk-8-jdk \
 		scala \
         && \
-
     $PIP_INSTALL \
 		pyspark \
 		findspark

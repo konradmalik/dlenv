@@ -1,7 +1,7 @@
 #!/bin/bash
 
 docker run --rm -it \
-    --name dlenv \
+	--name dlenv \
     --volume /home/konrad/Software/DLEnv/data:/data \
     --publish 8888:8888 \
 	--publish 5000:5000 \
