@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.com/konradmalik/dlenv.svg?branch=master)](https://travis-ci.com/konradmalik/dlenv)
 # DLEnv
 
 Container for ML, AI, Deep Learning, reinforcement learning etc.
