@@ -1,15 +1,15 @@
 # ==================================================================
 # module list
 # ------------------------------------------------------------------
-# python        3.7    (apt)
-# jupyter lab   latest (pip)
-# pytorch       latest (pip)
-# ax            latest (pip)
-# tensorflow    latest (pip)
-# opencv        4.1.1  (git)
-# OpenAI gym    latest (pip)
-# MLflow		latest (pip)
-# Spark/pySpark 2.4.4  (apt+pip)
+# python                    3.7    (apt)
+# jupyter hub+lab           latest (pip)
+# pytorch                   latest (pip)
+# ax                        latest (pip)
+# tensorflow                latest (pip)
+# opencv                    4.1.1  (git)
+# OpenAI gym                latest (pip)
+# MLflow		            latest (pip)
+# Spark/pySpark/toree       2.4.4  (apt+pip)
 # ==================================================================
 
 FROM ubuntu:18.04
@@ -27,7 +27,6 @@ RUN rm -rf /var/lib/apt/lists/* \
 # ==================================================================
 # tools
 # ------------------------------------------------------------------
-
 RUN DEBIAN_FRONTEND=noninteractive $APT_INSTALL \
         build-essential \
         apt-utils \
@@ -75,37 +74,36 @@ RUN DEBIAN_FRONTEND=noninteractive $APT_INSTALL \
         h5py
 
 # ==================================================================
-# jupyter lab
+# jupyter hub
 # ------------------------------------------------------------------
-
-RUN $PIP_INSTALL \
-        jupyterlab
+RUN DEBIAN_FRONTEND=noninteractive $APT_INSTALL \
+    npm  nodejs && \
+    npm install -g configurable-http-proxy && \
+    $PIP_INSTALL \
+        jupyterhub jupyterlab && \
+        jupyterhub --generate-config
 
 # ==================================================================
 # pytorch
 # ------------------------------------------------------------------
-
 RUN $PIP_INSTALL \
 		torch==1.2.0+cpu torchvision==0.4.0+cpu -f https://download.pytorch.org/whl/torch_stable.html
         
 # ==================================================================
 # ax
 # ------------------------------------------------------------------
-        
 RUN $PIP_INSTALL \
         ax-platform
 
 # ==================================================================
 # tensorflow
 # ------------------------------------------------------------------
-
 RUN $PIP_INSTALL \
-        tensorflow==2.0.0-rc0
+        tensorflow==2.0.0-rc1
 
 # ==================================================================
 # opencv
 # ------------------------------------------------------------------
-
 RUN DEBIAN_FRONTEND=noninteractive $APT_INSTALL \
         libatlas-base-dev \
         libgflags-dev \
@@ -133,7 +131,6 @@ RUN DEBIAN_FRONTEND=noninteractive $APT_INSTALL \
 # ==================================================================
 # OpenAI GYM
 # ------------------------------------------------------------------
-
 RUN DEBIAN_FRONTEND=noninteractive $APT_INSTALL \
         python3-dev \
         zlib1g-dev \
@@ -159,7 +156,6 @@ RUN DEBIAN_FRONTEND=noninteractive $APT_INSTALL \
 # ==================================================================
 # MLflow 
 # ------------------------------------------------------------------
-
 RUN $PIP_INSTALL \
 		mlflow && \
 		sed -i 's/127.0.0.1/0.0.0.0/g' /usr/local/lib/python${PYTHON_COMPAT_VERSION}/dist-packages/mlflow/cli.py && \
@@ -172,7 +168,6 @@ RUN $PIP_INSTALL \
 # ==================================================================
 # Spark
 # ------------------------------------------------------------------
-
 ARG SPARK_ARCHIVE=https://www-eu.apache.org/dist/spark/spark-2.4.4/spark-2.4.4-bin-hadoop2.7.tgz
 RUN curl -s $SPARK_ARCHIVE | tar -xz -C /usr/local/
 
@@ -187,13 +182,33 @@ RUN DEBIAN_FRONTEND=noninteractive $APT_INSTALL \
 		pyspark \
 		findspark
 
+# install apache toree in jupyterlab
+RUN $PIP_INSTALL \ 
+    toree && \
+    jupyter toree install --spark_home=$SPARK_HOME --interpreters=Scala,PySpark,SQL
 # ==================================================================
 # config & cleanup
 # ------------------------------------------------------------------
-
 RUN ldconfig && \
     apt-get clean && \
     apt-get autoremove && \
     rm -rf /var/lib/apt/lists/* /tmp/* ~/*
 
+# add default user
+RUN groupadd -r dlenv && \
+    useradd -r -p $(openssl passwd -1 dlenv) -g dlenv dlenv
+RUN mkdir -p /home/dlenv && \
+    chown -R dlenv:dlenv /home/dlenv
+    
+# make sure data folder has proper permissions
+VOLUME /home/dlenv
+WORKDIR /home/dlenv
+# run as non-root
+USER dlenv
+
 EXPOSE 8888 6006 5000
+
+# change below for toree on remote spark
+ENV SPARK_OPTS='--master=local[1]'
+ENV JUPYTER_LAB_TOKEN="test"
+CMD ["jupyter","lab","--no-browser","--ip=0.0.0.0","--NotebookApp.token=$JUPYTER_LAB_TOKEN","--notebook-dir='/home/dlenv'"]
