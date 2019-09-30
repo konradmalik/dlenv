@@ -1,4 +1,4 @@
 build:
-	docker build -t dlenv .
+	docker build -t konradmalik/dlenv .
 buildx:
-	docker buildx build --platform linux/amd64,linux/arm64,linux/arm/v7 -t dlenv .
+	docker buildx build --platform linux/amd64,linux/arm64,linux/arm/v7 -t konradmalik/dlenv .
