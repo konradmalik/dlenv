@@ -6,6 +6,6 @@ docker run --rm -it \
 	--publish 5000:5000 \
 	--publish 4040:4040 \
     --ipc host \
+    --volume /home/konrad/Software/DLEnv/data:/home/dlenv \
 	dlenv
 
-    #--volume /home/konrad/Software/DLEnv/data:/home/dlenv \
