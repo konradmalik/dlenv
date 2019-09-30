@@ -53,6 +53,7 @@ RUN DEBIAN_FRONTEND=noninteractive $APT_INSTALL \
         python${PYTHON_COMPAT_VERSION} \
         python${PYTHON_COMPAT_VERSION}-dev \
         python3-distutils-extra \
+		libblas-dev liblapack-dev libatlas-base-dev gfortran \
         && \
     wget -O ~/get-pip.py \
         https://bootstrap.pypa.io/get-pip.py && \
