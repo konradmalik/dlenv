@@ -38,7 +38,6 @@ RUN DEBIAN_FRONTEND=noninteractive $APT_INSTALL \
         unzip \
         unrar \
         cmake \
-		nano \
 		tmux
 
 # ==================================================================
@@ -99,7 +98,7 @@ RUN $PIP_INSTALL \
 # tensorflow
 # ------------------------------------------------------------------
 RUN $PIP_INSTALL \
-        tensorflow==2.0.0-rc1
+        tensorflow
 
 # ==================================================================
 # opencv
