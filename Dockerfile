@@ -38,7 +38,6 @@ RUN DEBIAN_FRONTEND=noninteractive $APT_INSTALL \
         unzip \
         unrar \
         cmake \
-		nano \
 		tmux
 
 # ==================================================================
@@ -100,7 +99,7 @@ RUN $PIP_INSTALL \
 # tensorflow
 # ------------------------------------------------------------------
 RUN $PIP_INSTALL \
-        tensorflow==2.0.0-rc1
+        tensorflow
 
 # ==================================================================
 # opencv
@@ -148,11 +147,9 @@ RUN DEBIAN_FRONTEND=noninteractive $APT_INSTALL \
         xvfb \
         && \
     $PIP_INSTALL \
-		'gym[algorithmic]' \
+        gym \
 		'gym[atari]' \
-		'gym[box2d]' \
-		'gym[classic_control]' \
-		'gym[toy_text]'
+		'gym[box2d]'
     
 # ==================================================================
 # MLflow 
@@ -160,11 +157,10 @@ RUN DEBIAN_FRONTEND=noninteractive $APT_INSTALL \
 RUN $PIP_INSTALL \
 		mlflow && \
 		sed -i 's/127.0.0.1/0.0.0.0/g' /usr/local/lib/python${PYTHON_COMPAT_VERSION}/dist-packages/mlflow/cli.py && \
-		wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda.sh && \
-    	/bin/bash ~/miniconda.sh -b -p /opt/conda && \
-    	rm ~/miniconda.sh && \
-    	ln -s /opt/conda/etc/profile.d/conda.sh /etc/profile.d/conda.sh && \
-    	echo ". /opt/conda/etc/profile.d/conda.sh" >> ~/.bashrc 
+        curl -LO http://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh && \
+        bash Miniconda-latest-Linux-x86_64.sh -p /miniconda -b && \
+        rm Miniconda-latest-Linux-x86_64.sh
+ENV PATH=/miniconda/bin:${PATH}
 
 # ==================================================================
 # Spark
@@ -186,7 +182,8 @@ RUN DEBIAN_FRONTEND=noninteractive $APT_INSTALL \
 # install apache toree in jupyterlab
 RUN $PIP_INSTALL \ 
     toree && \
-    jupyter toree install --spark_home=$SPARK_HOME --interpreters=Scala,PySpark,SQL
+    jupyter toree install --spark_home=$SPARK_HOME --interpreters=Scala,SQL
+
 # ==================================================================
 # config & cleanup
 # ------------------------------------------------------------------
@@ -210,6 +207,6 @@ USER dlenv
 EXPOSE 8888 6006 5000
 
 # change below for toree on remote spark
-ENV SPARK_OPTS='--master=local[1]'
+ENV SPARK_OPTS='--master=local[*]'
 ENV JUPYTER_LAB_TOKEN="test"
 CMD ["jupyter","lab","--no-browser","--ip=0.0.0.0","--NotebookApp.token=$JUPYTER_LAB_TOKEN","--notebook-dir='/home/dlenv'"]
