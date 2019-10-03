@@ -14,7 +14,7 @@
 
 FROM ubuntu:18.04
 ENV LANG C.UTF-8
-ENV APT_INSTALL="apt-get install -y --no-install-recommends --fix-missing"
+ENV APT_INSTALL="DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends --fix-missing"
 ENV PIP_INSTALL="python -m pip --no-cache-dir install --upgrade"
 ENV GIT_CLONE="git clone --depth 10"
 ENV PYTHON_COMPAT_VERSION=3.7
@@ -27,7 +27,7 @@ RUN rm -rf /var/lib/apt/lists/* \
 # ==================================================================
 # tools
 # ------------------------------------------------------------------
-RUN DEBIAN_FRONTEND=noninteractive $APT_INSTALL \
+RUN $APT_INSTALL \
         build-essential \
         apt-utils \
         ca-certificates \
@@ -43,12 +43,10 @@ RUN DEBIAN_FRONTEND=noninteractive $APT_INSTALL \
 # ==================================================================
 # python
 # ------------------------------------------------------------------
-RUN DEBIAN_FRONTEND=noninteractive $APT_INSTALL \
-        software-properties-common \
-        && \
-    add-apt-repository ppa:deadsnakes/ppa && \
+RUN add-apt-repository ppa:deadsnakes/ppa && \
     apt-get update && \
-    DEBIAN_FRONTEND=noninteractive $APT_INSTALL \
+    $APT_INSTALL \
+        software-properties-common \
         python${PYTHON_COMPAT_VERSION} \
         python${PYTHON_COMPAT_VERSION}-dev \
         python3-distutils-extra \
@@ -61,8 +59,6 @@ RUN DEBIAN_FRONTEND=noninteractive $APT_INSTALL \
     ln -s /usr/bin/python${PYTHON_COMPAT_VERSION} /usr/local/bin/python && \
     $PIP_INSTALL \
         setuptools \
-        && \
-    $PIP_INSTALL \
         numpy \
         scipy \
         pandas \
@@ -76,7 +72,7 @@ RUN DEBIAN_FRONTEND=noninteractive $APT_INSTALL \
 # ==================================================================
 # jupyter hub
 # ------------------------------------------------------------------
-RUN DEBIAN_FRONTEND=noninteractive $APT_INSTALL \
+RUN $APT_INSTALL \
     npm  nodejs && \
     npm install -g configurable-http-proxy && \
     $PIP_INSTALL \
@@ -104,7 +100,7 @@ RUN $PIP_INSTALL \
 # ==================================================================
 # opencv
 # ------------------------------------------------------------------
-RUN DEBIAN_FRONTEND=noninteractive $APT_INSTALL \
+RUN $APT_INSTALL \
         libatlas-base-dev \
         libgflags-dev \
         libgoogle-glog-dev \
@@ -131,7 +127,7 @@ RUN DEBIAN_FRONTEND=noninteractive $APT_INSTALL \
 # ==================================================================
 # OpenAI GYM
 # ------------------------------------------------------------------
-RUN DEBIAN_FRONTEND=noninteractive $APT_INSTALL \
+RUN $APT_INSTALL \
         python3-dev \
         zlib1g-dev \
         libjpeg-dev \
@@ -158,8 +154,8 @@ RUN $PIP_INSTALL \
 		mlflow && \
 		sed -i 's/127.0.0.1/0.0.0.0/g' /usr/local/lib/python${PYTHON_COMPAT_VERSION}/dist-packages/mlflow/cli.py && \
         curl -LO http://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh && \
-        bash Miniconda-latest-Linux-x86_64.sh -p /miniconda -b && \
-        rm Miniconda-latest-Linux-x86_64.sh
+        bash Miniconda3-latest-Linux-x86_64.sh -p /miniconda -b && \
+        rm Miniconda3-latest-Linux-x86_64.sh
 ENV PATH=/miniconda/bin:${PATH}
 
 # ==================================================================
@@ -208,5 +204,5 @@ EXPOSE 8888 6006 5000
 
 # change below for toree on remote spark
 ENV SPARK_OPTS='--master=local[*]'
-ENV JUPYTER_LAB_TOKEN="test"
+ENV JUPYTER_LAB_TOKEN="dlenv"
 CMD ["jupyter","lab","--no-browser","--ip=0.0.0.0","--NotebookApp.token=$JUPYTER_LAB_TOKEN","--notebook-dir='/home/dlenv'"]
