@@ -14,7 +14,8 @@
 
 FROM ubuntu:18.04
 ENV LANG C.UTF-8
-ENV APT_INSTALL="DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends --fix-missing"
+ENV DEBIAN_FRONTEND=noninteractive
+ENV APT_INSTALL="apt-get install -y --no-install-recommends --fix-missing"
 ENV PIP_INSTALL="python -m pip --no-cache-dir install --upgrade"
 ENV GIT_CLONE="git clone --depth 10"
 ENV PYTHON_COMPAT_VERSION=3.7
@@ -43,10 +44,11 @@ RUN $APT_INSTALL \
 # ==================================================================
 # python
 # ------------------------------------------------------------------
-RUN add-apt-repository ppa:deadsnakes/ppa && \
+RUN $APT_INSTALL \
+        software-properties-common && \
+	add-apt-repository ppa:deadsnakes/ppa && \
     apt-get update && \
-    $APT_INSTALL \
-        software-properties-common \
+	$APT_INSTALL \
         python${PYTHON_COMPAT_VERSION} \
         python${PYTHON_COMPAT_VERSION}-dev \
         python3-distutils-extra \
