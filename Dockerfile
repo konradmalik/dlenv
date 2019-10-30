@@ -196,15 +196,17 @@ RUN groupadd -r dlenv && \
 RUN mkdir -p /home/dlenv && \
     chown -R dlenv:dlenv /home/dlenv
     
-# make sure data folder has proper permissions
-VOLUME /home/dlenv
-WORKDIR /home/dlenv
 # run as non-root
 USER dlenv
+
+# make sure data folder has proper permissions
+RUN mkdir -p /home/dlenv/data
+VOLUME /home/dlenv/data
+WORKDIR /home/dlenv
 
 EXPOSE 8888 6006 5000
 
 # change below for toree on remote spark
 ENV SPARK_OPTS='--master=local[*]'
 ENV JUPYTER_LAB_TOKEN="dlenv"
-CMD ["jupyter","lab","--no-browser","--ip=0.0.0.0","--NotebookApp.token=$JUPYTER_LAB_TOKEN","--notebook-dir='/home/dlenv'"]
+CMD ["sh", "-c", "jupyter lab --no-browser --ip=0.0.0.0 --NotebookApp.token=$JUPYTER_LAB_TOKEN --notebook-dir='/home/dlenv'"]
