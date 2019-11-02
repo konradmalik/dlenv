@@ -13,6 +13,4 @@ $ make build
 
 Then run either bash shell or jupyter server using provided shell scripts.
 
-**REMEMBER** to change data folder path to the container in the scripts. Data folder will be shared between the host and container. Save your scripts, data, files etc. there to have access to them from the container or to persist them.
-
 Run scripts are currently set up to autodelete after exit so all data that is not in the "data" folder will be lost!
