@@ -15,15 +15,14 @@
 
 FROM ubuntu:18.04
 ENV LANG C.UTF-8
-ENV DEBIAN_FRONTEND=noninteractive
-ENV APT_INSTALL="apt-get install -y --no-install-recommends --fix-missing"
-ENV PIP_INSTALL="python -m pip --no-cache-dir install --upgrade"
-ENV GIT_CLONE="git clone --depth 10"
-ENV PYTHON_COMPAT_VERSION=3.7
-ENV SPARK_VERSION=2.4.4
-ENV POLYNOTE_VERSION=0.2.11
-ENV TORCHVISION_VERSION=0.4.1
-ENV TORCH_VERSION=1.3.0
+ARG APT_INSTALL="apt-get install -y --no-install-recommends --fix-missing"
+ARG PIP_INSTALL="python -m pip --no-cache-dir install --upgrade"
+ARG GIT_CLONE="git clone --depth 10"
+ARG PYTHON_COMPAT_VERSION=3.7
+ARG SPARK_VERSION=2.4.4
+ARG POLYNOTE_VERSION=0.2.11
+ARG TORCHVISION_VERSION=0.4.1
+ARG TORCH_VERSION=1.3.0
 
 RUN rm -rf /var/lib/apt/lists/* \
            /etc/apt/sources.list.d/cuda.list \
@@ -33,7 +32,7 @@ RUN rm -rf /var/lib/apt/lists/* \
 # ==================================================================
 # tools
 # ------------------------------------------------------------------
-RUN $APT_INSTALL \
+RUN DEBIAN_FRONTEND=noninteractive $APT_INSTALL \
         build-essential \
         apt-utils \
         ca-certificates \
@@ -49,7 +48,7 @@ RUN $APT_INSTALL \
 # ==================================================================
 # python
 # ------------------------------------------------------------------
-RUN $APT_INSTALL \
+RUN DEBIAN_FRONTEND=noninteractive $APT_INSTALL \
         software-properties-common && \
 	add-apt-repository ppa:deadsnakes/ppa && \
     apt-get update && \
@@ -79,7 +78,7 @@ RUN $APT_INSTALL \
 # ==================================================================
 # jupyter hub
 # ------------------------------------------------------------------
-RUN $APT_INSTALL \
+RUN DEBIAN_FRONTEND=noninteractive $APT_INSTALL \
     npm  nodejs && \
     npm install -g configurable-http-proxy && \
     $PIP_INSTALL \
@@ -107,7 +106,7 @@ RUN $PIP_INSTALL \
 # ==================================================================
 # opencv
 # ------------------------------------------------------------------
-RUN $APT_INSTALL \
+RUN DEBIAN_FRONTEND=noninteractive $APT_INSTALL \
         libatlas-base-dev \
         libgflags-dev \
         libgoogle-glog-dev \
@@ -134,7 +133,7 @@ RUN $APT_INSTALL \
 # ==================================================================
 # OpenAI GYM
 # ------------------------------------------------------------------
-RUN $APT_INSTALL \
+RUN DEBIAN_FRONTEND=noninteractive $APT_INSTALL \
         python3-dev \
         zlib1g-dev \
         libjpeg-dev \
@@ -184,7 +183,9 @@ RUN DEBIAN_FRONTEND=noninteractive $APT_INSTALL \
         koalas
 
 #Also, make sure your PYTHONPATH can find the PySpark and Py4J under $SPARK_HOME/python/lib:
-ENV PYTHONPATH="$(ZIPS=(\"$SPARK_HOME\"/python/lib/*.zip); IFS=:; echo \"${ZIPS[*]}\"):$PYTHONPATH"
+# not sure if needed but polynote installation guide specifies this
+RUN cp $(ls $SPARK_HOME/python/lib/py4j*) $SPARK_HOME/python/lib/py4j-src.zip
+ENV PYTHONPATH $SPARK_HOME/python/lib/pyspark.zip:$SPARK_HOME/python/lib/py4j-src.zip:$PYTHONPATH
 
 # install apache toree in jupyterlab
 RUN $PIP_INSTALL \ 
@@ -194,7 +195,7 @@ RUN $PIP_INSTALL \
 # ==================================================================
 # Polynote
 # ------------------------------------------------------------------
-ARG POLYNOTE_ARCHIVE=https://github.com/polynote/polynote/releases/download/$POLYNOTE_ARCHIVE/polynote-dist.tar.gz
+ARG POLYNOTE_ARCHIVE=https://github.com/polynote/polynote/releases/download/$POLYNOTE_VERSION/polynote-dist.tar.gz
 RUN curl -sL $POLYNOTE_ARCHIVE | tar -zx -C /usr/local/
 ENV POLYNOTE_HOME /usr/local/polynote
 
