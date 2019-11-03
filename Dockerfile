@@ -10,6 +10,7 @@
 # OpenAI gym                latest (pip)
 # MLflow		            latest (pip)
 # Spark/pySpark/toree       2.4.4  (apt+pip)
+# polynote                  latest (github tar)
 # ==================================================================
 
 FROM ubuntu:18.04
@@ -19,6 +20,10 @@ ENV APT_INSTALL="apt-get install -y --no-install-recommends --fix-missing"
 ENV PIP_INSTALL="python -m pip --no-cache-dir install --upgrade"
 ENV GIT_CLONE="git clone --depth 10"
 ENV PYTHON_COMPAT_VERSION=3.7
+ENV SPARK_VERSION=2.4.4
+ENV POLYNOTE_VERSION=0.2.11
+ENV TORCHVISION_VERSION=0.4.1
+ENV TORCH_VERSION=1.3.0
 
 RUN rm -rf /var/lib/apt/lists/* \
            /etc/apt/sources.list.d/cuda.list \
@@ -85,7 +90,7 @@ RUN $APT_INSTALL \
 # pytorch
 # ------------------------------------------------------------------
 RUN $PIP_INSTALL \
-		torch==1.2.0+cpu torchvision==0.4.0+cpu -f https://download.pytorch.org/whl/torch_stable.html
+		torch==$TORCH_VERSION+cpu torchvision==$TORCHVISION_VERSION+cpu -f https://download.pytorch.org/whl/torch_stable.html
         
 # ==================================================================
 # ax
@@ -163,11 +168,11 @@ ENV PATH=/miniconda/bin:${PATH}
 # ==================================================================
 # Spark
 # ------------------------------------------------------------------
-ARG SPARK_ARCHIVE=https://www-eu.apache.org/dist/spark/spark-2.4.4/spark-2.4.4-bin-hadoop2.7.tgz
+ARG SPARK_ARCHIVE=https://www-eu.apache.org/dist/spark/spark-$SPARK_VERSION/spark-$SPARK_VERSION-bin-hadoop2.7.tgz
 RUN curl -s $SPARK_ARCHIVE | tar -xz -C /usr/local/
 
-ENV SPARK_HOME /usr/local/spark-2.4.4-bin-hadoop2.7
-ENV PATH $PATH:$SPARK_HOME/bin
+ENV SPARK_HOME /usr/local/spark-$SPARK_VERSION-bin-hadoop2.7
+ENV PATH $PATH:$SPARK_HOME/sbin
 
 RUN DEBIAN_FRONTEND=noninteractive $APT_INSTALL \
         openjdk-8-jdk \
@@ -181,6 +186,16 @@ RUN DEBIAN_FRONTEND=noninteractive $APT_INSTALL \
 RUN $PIP_INSTALL \ 
     toree && \
     jupyter toree install --spark_home=$SPARK_HOME --interpreters=Scala,SQL
+
+# ==================================================================
+# Polynote
+# ------------------------------------------------------------------
+ARG POLYNOTE_ARCHIVE=https://github.com/polynote/polynote/releases/download/$POLYNOTE_ARCHIVE/polynote-dist.tar.gz
+RUN curl -s $POLYNOTE_ARCHIVE | tar -xz -C /usr/local/
+ENV POLYNOTE_HOME /usr/local/polynote
+
+RUN $PIP_INSTALL \ 
+    jep jedi pyspark virtualenv
 
 # ==================================================================
 # config & cleanup
@@ -204,7 +219,14 @@ RUN mkdir -p /home/dlenv/data
 VOLUME /home/dlenv/data
 WORKDIR /home/dlenv
 
-EXPOSE 8888 6006 5000
+# jupyterlab
+EXPOSE 8888
+# jupyterhub
+EXPOSE 8000
+# spark ui
+EXPOSE 4040
+#polynote
+EXPOSE 8192
 
 # change below for toree on remote spark
 ENV SPARK_OPTS='--master=local[*]'
