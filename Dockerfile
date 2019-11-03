@@ -5,11 +5,11 @@
 # jupyter hub+lab           latest (pip)
 # pytorch                   latest (pip)
 # ax                        latest (pip)
-# tensorflow                latest (pip)
+# tensorflow +(keras-tuner) latest (pip)
 # opencv                    4.1.1  (git)
 # OpenAI gym                latest (pip)
 # MLflow		            latest (pip)
-# Spark/pySpark/toree       2.4.4  (apt+pip)
+# Spark+py+koalas+toree     2.4.4  (apt+pip)
 # polynote                  latest (github tar)
 # ==================================================================
 
@@ -166,7 +166,7 @@ RUN $PIP_INSTALL \
 ENV PATH=/miniconda/bin:${PATH}
 
 # ==================================================================
-# Spark
+# Spark (with pyspark and koalas)
 # ------------------------------------------------------------------
 ARG SPARK_ARCHIVE=https://www-eu.apache.org/dist/spark/spark-$SPARK_VERSION/spark-$SPARK_VERSION-bin-hadoop2.7.tgz
 RUN curl -s $SPARK_ARCHIVE | tar -xz -C /usr/local/
@@ -180,7 +180,11 @@ RUN DEBIAN_FRONTEND=noninteractive $APT_INSTALL \
         && \
     $PIP_INSTALL \
 		pyspark \
-		findspark
+		findspark \
+        koalas
+
+#Also, make sure your PYTHONPATH can find the PySpark and Py4J under $SPARK_HOME/python/lib:
+ENV PYTHONPATH=$(ZIPS=("$SPARK_HOME"/python/lib/*.zip); IFS=:; echo "${ZIPS[*]}"):$PYTHONPATH
 
 # install apache toree in jupyterlab
 RUN $PIP_INSTALL \ 
