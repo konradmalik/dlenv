@@ -19,6 +19,7 @@ ARG APT_INSTALL="apt-get install -y --no-install-recommends --fix-missing"
 ARG PIP_INSTALL="python -m pip --no-cache-dir install --upgrade"
 ARG GIT_CLONE="git clone --depth 10"
 ARG PYTHON_COMPAT_VERSION=3.7
+ARG JAVA_VERSION=8
 ARG SPARK_VERSION=2.4.4
 ARG POLYNOTE_VERSION=0.2.11
 ARG TORCHVISION_VERSION=0.4.1
@@ -174,13 +175,14 @@ ENV SPARK_HOME /usr/local/spark-$SPARK_VERSION-bin-hadoop2.7
 ENV PATH $PATH:$SPARK_HOME/sbin
 
 RUN DEBIAN_FRONTEND=noninteractive $APT_INSTALL \
-        openjdk-8-jdk \
+        openjdk-$JAVA_VERSION-jdk \
 		scala \
         && \
     $PIP_INSTALL \
 		pyspark \
 		findspark \
         koalas
+ENV JAVA_HOME /usr/lib/jvm/java-$JAVA_VERSION-openjdk-amd64
 
 #Also, make sure your PYTHONPATH can find the PySpark and Py4J under $SPARK_HOME/python/lib:
 # not sure if needed but polynote installation guide specifies this
