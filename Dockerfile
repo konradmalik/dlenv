@@ -184,7 +184,7 @@ RUN DEBIAN_FRONTEND=noninteractive $APT_INSTALL \
         koalas
 
 #Also, make sure your PYTHONPATH can find the PySpark and Py4J under $SPARK_HOME/python/lib:
-ENV PYTHONPATH=$(ZIPS=("$SPARK_HOME"/python/lib/*.zip); IFS=:; echo "${ZIPS[*]}"):$PYTHONPATH
+ENV PYTHONPATH="$(ZIPS=(\"$SPARK_HOME\"/python/lib/*.zip); IFS=:; echo \"${ZIPS[*]}\"):$PYTHONPATH"
 
 # install apache toree in jupyterlab
 RUN $PIP_INSTALL \ 
