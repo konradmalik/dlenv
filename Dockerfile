@@ -191,7 +191,7 @@ RUN $PIP_INSTALL \
 # Polynote
 # ------------------------------------------------------------------
 ARG POLYNOTE_ARCHIVE=https://github.com/polynote/polynote/releases/download/$POLYNOTE_ARCHIVE/polynote-dist.tar.gz
-RUN curl -s $POLYNOTE_ARCHIVE | tar -xz -C /usr/local/
+RUN curl -s $POLYNOTE_ARCHIVE | tar -zxvpf -C /usr/local/
 ENV POLYNOTE_HOME /usr/local/polynote
 
 RUN $PIP_INSTALL \ 
