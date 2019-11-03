@@ -99,10 +99,10 @@ RUN $PIP_INSTALL \
         ax-platform
 
 # ==================================================================
-# tensorflow
+# tensorflow with keras tuner
 # ------------------------------------------------------------------
 RUN $PIP_INSTALL \
-        tensorflow
+        tensorflow keras-tuner
 
 # ==================================================================
 # opencv
