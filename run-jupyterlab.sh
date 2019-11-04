@@ -5,6 +5,6 @@ docker run --rm -it \
     --publish 8888:8888 \
 	--publish 4040:4040 \
     --ipc host \
-    --volume `pwd`/DLEnv/data:/home/dlenv/data \
+    --volume `pwd`/data:/home/dlenv/data \
 	konradmalik/dlenv
 
