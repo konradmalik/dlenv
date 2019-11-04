@@ -75,7 +75,9 @@ RUN DEBIAN_FRONTEND=noninteractive $APT_INSTALL \
 		joblib \
         matplotlib \
         Cython \
-        h5py
+        h5py \
+        onnx onnxruntime
+
 
 # ==================================================================
 # jupyter hub
@@ -163,7 +165,9 @@ RUN $PIP_INSTALL \
 		sed -i 's/127.0.0.1/0.0.0.0/g' /usr/local/lib/python${PYTHON_COMPAT_VERSION}/dist-packages/mlflow/cli.py && \
         curl -LO http://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh && \
         bash Miniconda3-latest-Linux-x86_64.sh -p /miniconda -b && \
-        rm Miniconda3-latest-Linux-x86_64.sh
+        rm Miniconda3-latest-Linux-x86_64.sh && \
+        conda init && \
+        conda config --set auto_activate_base false
 ENV PATH=/miniconda/bin:${PATH}
 
 # ==================================================================
