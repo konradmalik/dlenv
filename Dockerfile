@@ -15,15 +15,9 @@
 
 FROM ubuntu:18.04
 ENV LANG C.UTF-8
-ARG APT_INSTALL="apt-get install -y --no-install-recommends --fix-missing"
-ARG PIP_INSTALL="python -m pip --no-cache-dir install --upgrade"
-ARG GIT_CLONE="git clone --depth 10"
-ARG PYTHON_COMPAT_VERSION=3.7
-ARG JAVA_VERSION=8
-ARG SPARK_VERSION=2.4.4
-ARG POLYNOTE_VERSION=0.2.11
-ARG TORCHVISION_VERSION=0.4.1
-ARG TORCH_VERSION=1.3.0
+ENV APT_INSTALL="apt-get install -y --no-install-recommends --fix-missing"
+ENV PIP_INSTALL="python -m pip --no-cache-dir install --upgrade"
+ENV GIT_CLONE="git clone --depth 10"
 
 RUN rm -rf /var/lib/apt/lists/* \
            /etc/apt/sources.list.d/cuda.list \
@@ -50,6 +44,7 @@ RUN DEBIAN_FRONTEND=noninteractive $APT_INSTALL \
 # ==================================================================
 # python
 # ------------------------------------------------------------------
+ENV PYTHON_COMPAT_VERSION=3.7
 RUN DEBIAN_FRONTEND=noninteractive $APT_INSTALL \
         software-properties-common && \
 	add-apt-repository ppa:deadsnakes/ppa && \
@@ -92,6 +87,8 @@ RUN DEBIAN_FRONTEND=noninteractive $APT_INSTALL \
 # ==================================================================
 # pytorch
 # ------------------------------------------------------------------
+ENV TORCHVISION_VERSION=0.4.1
+ENV TORCH_VERSION=1.3.0
 RUN $PIP_INSTALL \
 		torch==$TORCH_VERSION+cpu torchvision==$TORCHVISION_VERSION+cpu -f https://download.pytorch.org/whl/torch_stable.html
         
@@ -173,7 +170,9 @@ ENV PATH=/miniconda/bin:${PATH}
 # ==================================================================
 # Spark (with pyspark and koalas)
 # ------------------------------------------------------------------
-ARG SPARK_ARCHIVE=https://www-eu.apache.org/dist/spark/spark-$SPARK_VERSION/spark-$SPARK_VERSION-bin-hadoop2.7.tgz
+ENV SPARK_VERSION=2.4.4
+ENV SPARK_ARCHIVE=https://www-eu.apache.org/dist/spark/spark-$SPARK_VERSION/spark-$SPARK_VERSION-bin-hadoop2.7.tgz
+ENV JAVA_VERSION=8
 RUN curl -s $SPARK_ARCHIVE | tar -xz -C /usr/local/
 
 ENV SPARK_HOME /usr/local/spark-$SPARK_VERSION-bin-hadoop2.7
@@ -202,7 +201,8 @@ RUN $PIP_INSTALL \
 # ==================================================================
 # Polynote
 # ------------------------------------------------------------------
-ARG POLYNOTE_ARCHIVE=https://github.com/polynote/polynote/releases/download/$POLYNOTE_VERSION/polynote-dist.tar.gz
+ENV POLYNOTE_VERSION=0.2.11
+ENV POLYNOTE_ARCHIVE=https://github.com/polynote/polynote/releases/download/$POLYNOTE_VERSION/polynote-dist.tar.gz
 RUN curl -sL $POLYNOTE_ARCHIVE | tar -zx -C /usr/local/
 ENV POLYNOTE_HOME /usr/local/polynote
 
