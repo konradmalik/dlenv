@@ -183,7 +183,7 @@ RUN DEBIAN_FRONTEND=noninteractive $APT_INSTALL \
 		scala \
         && \
     $PIP_INSTALL \
-		pyspark \
+		pyspark==$SPARK_VERSION \
 		findspark \
         koalas
 ENV JAVA_HOME /usr/lib/jvm/java-$JAVA_VERSION-openjdk-amd64
@@ -207,7 +207,7 @@ RUN curl -sL $POLYNOTE_ARCHIVE | tar -zx -C /usr/local/
 ENV POLYNOTE_HOME /usr/local/polynote
 
 RUN $PIP_INSTALL \ 
-    jep jedi pyspark virtualenv
+    jep jedi pyspark==$SPARK_VERSION virtualenv
 
 # ==================================================================
 # config & cleanup
