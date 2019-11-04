@@ -37,6 +37,7 @@ RUN DEBIAN_FRONTEND=noninteractive $APT_INSTALL \
         build-essential \
         apt-utils \
         ca-certificates \
+        sudo \
         wget \
         git \
         vim \
@@ -214,7 +215,7 @@ RUN ldconfig && \
 
 # add default user
 RUN groupadd -r dlenv && \
-    useradd -r -p $(openssl passwd -1 dlenv) -g dlenv dlenv
+    useradd -r -p $(openssl passwd -1 dlenv) -g dlenv -G sudo dlenv
 RUN mkdir -p /home/dlenv && \
     chown -R dlenv:dlenv /home/dlenv
     
