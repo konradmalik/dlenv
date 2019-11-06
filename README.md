@@ -3,6 +3,8 @@
 
 Container for ML, AI, Deep Learning, reinforcement learning etc.
 
+For contents, included libraries etc. see the first couple of lines of the Dockerfile.
+
 Inspired by <https://github.com/ufoym/deepo> but modified to my liking.
 
 Build container using "make":
