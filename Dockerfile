@@ -9,7 +9,7 @@
 # opencv                    4.1.1  (git)
 # OpenAI gym                latest (pip)
 # MLflow		            latest (pip)
-# Spark+py+koalas+toree     2.4.4  (apt+pip)
+# Spark+py+koalas           2.4.4  (apt+pip)
 # polynote                  latest (github tar)
 # ==================================================================
 
@@ -173,6 +173,8 @@ RUN conda init && \
 ENV SPARK_VERSION=2.4.4
 ENV SPARK_ARCHIVE=https://www-eu.apache.org/dist/spark/spark-$SPARK_VERSION/spark-$SPARK_VERSION-bin-hadoop2.7.tgz
 ENV JAVA_VERSION=8
+ENV SCALA_VERSION=2.11.12
+ENV ALMOND_VERSION=0.8.3
 RUN curl -s $SPARK_ARCHIVE | tar -xz -C /usr/local/
 
 ENV SPARK_HOME /usr/local/spark-$SPARK_VERSION-bin-hadoop2.7
@@ -193,10 +195,16 @@ ENV JAVA_HOME /usr/lib/jvm/java-$JAVA_VERSION-openjdk-amd64
 RUN cp $(ls $SPARK_HOME/python/lib/py4j*) $SPARK_HOME/python/lib/py4j-src.zip
 ENV PYTHONPATH $SPARK_HOME/python/lib/pyspark.zip:$SPARK_HOME/python/lib/py4j-src.zip:$PYTHONPATH
 
-# install apache toree in jupyterlab
-RUN $PIP_INSTALL \ 
-    toree && \
-    jupyter toree install --spark_home=$SPARK_HOME --interpreters=Scala,SQL
+# install proper scala/spark kernel
+RUN curl -Lo coursier https://git.io/coursier-cli && \
+    chmod +x coursier && \
+    ./coursier bootstrap \
+        -r jitpack \
+        -i user -I user:sh.almond:scala-kernel-api_$SCALA_VERSION:$ALMOND_VERSION \
+        sh.almond:scala-kernel_$SCALA_VERSION:$ALMOND_VERSION \
+        -o almond
+RUN ./almond --install && \
+    rf -rf almond coursier
 
 # ==================================================================
 # Polynote
@@ -246,8 +254,6 @@ EXPOSE 4040
 #polynote
 EXPOSE 8192
 
-# change below for toree on remote spark
-ENV SPARK_OPTS='--master=local[*]'
 ENV JUPYTER_LAB_TOKEN="dlenv"
 
 CMD ["sh", "-c", "jupyter lab --no-browser --ip=0.0.0.0 --NotebookApp.token=$JUPYTER_LAB_TOKEN --notebook-dir='/home/dlenv'"]
