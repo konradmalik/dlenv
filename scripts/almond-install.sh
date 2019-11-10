@@ -13,7 +13,6 @@
     }
   interp.load.cp(jars)
   import \$ivy.\`sh.almond::almond-spark:${ALMOND_VERSION}\`
-  import \$ivy.\`org.apache.hadoop:hadoop-client:${HADOOP_VERSION}\`
   import org.apache.log4j.{Level, Logger}
   Logger.getLogger(\"org\").setLevel(Level.OFF)
   " 

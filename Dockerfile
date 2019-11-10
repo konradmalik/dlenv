@@ -9,7 +9,7 @@
 # opencv                    4.1.1  (git)
 # OpenAI gym                latest (pip)
 # MLflow		            latest (pip)
-# Spark+py+koalas           2.4.4  (apt+pip)
+# Spark+koalas              2.4.4  (apt+pip)
 # polynote                  latest (github tar)
 # ==================================================================
 
@@ -173,10 +173,9 @@ RUN conda init && \
 ENV SPARK_VERSION=2.4.4
 ENV SPARK_ARCHIVE=https://www-eu.apache.org/dist/spark/spark-$SPARK_VERSION/spark-$SPARK_VERSION-bin-hadoop2.7.tgz
 ENV JAVA_VERSION=8
-# for now this is a must, spark cassandra connector does not work with 2.12
-ENV SCALA_VERSION=2.11.12
+ENV SCALA_VERSION=2.12.9
 # compatibility matrix with scala version
-ENV ALMOND_VERSION=0.6.0 
+ENV ALMOND_VERSION=0.8.2 
 RUN curl -s $SPARK_ARCHIVE | tar -xz -C /usr/local/
 
 ENV SPARK_HOME /usr/local/spark-$SPARK_VERSION-bin-hadoop2.7
@@ -187,8 +186,6 @@ RUN DEBIAN_FRONTEND=noninteractive $APT_INSTALL \
 		scala \
         && \
     $PIP_INSTALL \
-		pyspark==$SPARK_VERSION \
-		findspark \
         koalas
 ENV JAVA_HOME /usr/lib/jvm/java-$JAVA_VERSION-openjdk-amd64
 
@@ -197,8 +194,6 @@ ENV JAVA_HOME /usr/lib/jvm/java-$JAVA_VERSION-openjdk-amd64
 RUN cp $(ls $SPARK_HOME/python/lib/py4j*) $SPARK_HOME/python/lib/py4j-src.zip
 ENV PYTHONPATH $SPARK_HOME/python/lib/pyspark.zip:$SPARK_HOME/python/lib/py4j-src.zip:$PYTHONPATH
 
-# need to override hadoop to support http! (overriden only when using scala in jupyter)
-ENV HADOOP_VERSION=2.10.0
 # install proper scala/spark kernel 
 RUN curl -Lo coursier https://git.io/coursier-cli && \
     chmod +x coursier && \
