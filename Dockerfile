@@ -208,7 +208,7 @@ RUN curl -Lo coursier https://git.io/coursier-cli && \
 # use existing spark directory to not download all this shit
 # https://github.com/almond-sh/almond/issues/227
 # last line with ALMOND wont be needed when we move to almond >= 0.7.0
-COPY almond-install.sh almond-install.sh
+COPY scripts/almond-install.sh almond-install.sh
 RUN chmod +x almond-install.sh && \
     ./almond-install.sh && \ 
     rm -rf almond coursier almond-install.sh
