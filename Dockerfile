@@ -206,7 +206,7 @@ RUN curl -Lo coursier https://git.io/coursier-cli && \
         sh.almond:scala-kernel_$SCALA_VERSION:$ALMOND_VERSION \
         -o almond
 RUN ./almond --install && \
-    rf -rf almond coursier
+    rm -rf almond coursier
 
 # ==================================================================
 # Polynote
