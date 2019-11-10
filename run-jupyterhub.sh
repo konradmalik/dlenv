@@ -7,4 +7,4 @@ docker run --rm -it \
 	--publish 4040:4040 \
     --ipc host \
     --user root:root \
-	konradmalik/dlenv jupyterhub --ip=0.0.0.0 --no-ssl --Spawner.default_url='/lab' --Spawner.env_keep=['PATH', 'PYTHONPATH', 'SPARK_HOME', 'CONDA_ROOT', 'CONDA_DEFAULT_ENV', 'VIRTUAL_ENV', 'LANG', 'LC_ALL']
+	konradmalik/dlenv jupyterhub --ip=0.0.0.0 --no-ssl --Spawner.default_url='/lab' --Spawner.env_keep="['PATH', 'PYTHONPATH', 'SPARK_HOME', 'CONDA_ROOT', 'CONDA_DEFAULT_ENV', 'VIRTUAL_ENV', 'LANG', 'LC_ALL']"

@@ -163,7 +163,7 @@ RUN $PIP_INSTALL \
         curl -LO http://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh && \
         bash Miniconda3-latest-Linux-x86_64.sh -p /miniconda -b && \
         rm Miniconda3-latest-Linux-x86_64.sh
-ENV PATH=/miniconda/bin:${PATH}
+ENV PATH=${PATH}:/miniconda/bin
 RUN conda init && \
         conda config --set auto_activate_base false
 
@@ -219,7 +219,7 @@ RUN curl -sL $POLYNOTE_ARCHIVE | tar -zx -C /usr/local/
 ENV POLYNOTE_HOME /usr/local/polynote
 
 RUN $PIP_INSTALL \ 
-    jep jedi pyspark==$SPARK_VERSION virtualenv
+    jep jedi virtualenv
 
 # ==================================================================
 # config & cleanup
