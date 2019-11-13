@@ -77,7 +77,6 @@ RUN DEBIAN_FRONTEND=noninteractive $APT_INSTALL \
 # ==================================================================
 # jupyter hub
 # ------------------------------------------------------------------
-ENV SHELL=/bin/bash
 RUN DEBIAN_FRONTEND=noninteractive $APT_INSTALL \
     npm  nodejs && \
     npm install -g configurable-http-proxy && \
@@ -231,11 +230,10 @@ RUN ldconfig && \
     rm -rf /var/lib/apt/lists/* /tmp/* ~/*
 
 # add default user
-RUN groupadd -r dlenv && \
-    useradd -r -p $(openssl passwd -1 dlenv) -g dlenv -G sudo dlenv
-RUN mkdir -p /home/dlenv && \
-    chown -R dlenv:dlenv /home/dlenv
-    
+ENV DEFAULT_USER=dlenv
+COPY scripts/add-user.sh add-user.sh
+RUN chmod +x add-user.sh && ./add-user.sh $DEFAULT_USER
+ 
 # Add Tini
 ENV TINI_VERSION v0.18.0
 ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
@@ -243,12 +241,12 @@ RUN chmod +x /tini
 ENTRYPOINT ["/tini", "--"]
 
 # run as non-root
-USER dlenv
+USER $DEFAULT_USER
 
 # make sure data folder has proper permissions
-RUN mkdir -p /home/dlenv/data
-VOLUME /home/dlenv/data
-WORKDIR /home/dlenv
+RUN mkdir -p /home/$DEFAULT_USER/data
+VOLUME /home/$DEFAULT_USER/data
+WORKDIR /home/$DEFAULT_USER
 
 # jupyterlab
 EXPOSE 8888
@@ -259,6 +257,6 @@ EXPOSE 4040
 #polynote
 EXPOSE 8192
 
-ENV JUPYTER_LAB_TOKEN="dlenv"
+ENV JUPYTER_LAB_TOKEN=$DEFAULT_USER
 
-CMD ["sh", "-c", "jupyter lab --no-browser --ip=0.0.0.0 --NotebookApp.token=$JUPYTER_LAB_TOKEN --notebook-dir='/home/dlenv'"]
+CMD ["sh", "-c", "jupyter lab --no-browser --ip=0.0.0.0 --NotebookApp.token=$JUPYTER_LAB_TOKEN --notebook-dir='/home/$DEFAULT_USER'"]
