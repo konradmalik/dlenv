@@ -259,4 +259,4 @@ EXPOSE 8192
 
 ENV JUPYTER_LAB_TOKEN=$DEFAULT_USER
 
-CMD ["sh", "-c", "jupyter lab --no-browser --ip=0.0.0.0 --NotebookApp.token=$JUPYTER_LAB_TOKEN --notebook-dir='/home/$DEFAULT_USER'"]
+CMD ["sh", "-c", "jupyter lab --no-browser --ip=0.0.0.0 --NotebookApp.token=$JUPYTER_LAB_TOKEN --notebook-dir=\"/home/$DEFAULT_USER\""]
