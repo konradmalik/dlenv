@@ -278,11 +278,12 @@ ENV DEFAULT_USER=dlenv
 COPY scripts/add-user.sh add-user.sh
 RUN chmod +x add-user.sh && ./add-user.sh $DEFAULT_USER
  
-# Add Tini
+# Add Tini and entrypoint
 ENV TINI_VERSION v0.18.0
 ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
-RUN chmod +x /tini
-ENTRYPOINT ["/tini", "--"]
+COPY scripts/docker-entrypoint.sh
+RUN chmod +x /tini && chmod +x docker-entrypoint.sh
+ENTRYPOINT ["/tini", "--", "/docker-entrypoint.sh"]
 
 # copy run scripts
 COPY scripts/run-* .

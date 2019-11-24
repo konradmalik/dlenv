@@ -1,7 +1,5 @@
 #!/bin/bash
 
-export SPARK_DIST_CLASSPATH=$(hadoop classpath)
-
 . "$SPARK_HOME/sbin/spark-config.sh"
 
 . "$SPARK_HOME/bin/load-spark-env.sh"
