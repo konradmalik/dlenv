@@ -6,6 +6,7 @@
 # pytorch                   latest (pip)
 # ax                        latest (pip)
 # tensorflow +(keras-tuner) latest (pip)
+# NLP (spacy, nltk)         latest (pip)
 # opencv                    4.1.1  (git)
 # OpenAI gym                latest (pip)
 # MLflow		            latest (pip)
@@ -87,8 +88,8 @@ RUN DEBIAN_FRONTEND=noninteractive $APT_INSTALL \
 # ==================================================================
 # pytorch
 # ------------------------------------------------------------------
-ENV TORCHVISION_VERSION=0.4.1
-ENV TORCH_VERSION=1.3.0
+ENV TORCHVISION_VERSION=0.4.2
+ENV TORCH_VERSION=1.3.1
 RUN $PIP_INSTALL \
 		torch==$TORCH_VERSION+cpu torchvision==$TORCHVISION_VERSION+cpu -f https://download.pytorch.org/whl/torch_stable.html
         
@@ -105,6 +106,14 @@ RUN $PIP_INSTALL \
         tensorflow keras-tuner
 
 # ==================================================================
+# NLP tools
+# ------------------------------------------------------------------
+RUN $PIP_INSTALL \
+        nltk spacy && \
+        python -d /usr/share/nltk_data -m nltk.downloader popular && \
+        python -m spacy download en
+
+# ==================================================================
 # opencv
 # ------------------------------------------------------------------
 RUN DEBIAN_FRONTEND=noninteractive $APT_INSTALL \
@@ -118,7 +127,7 @@ RUN DEBIAN_FRONTEND=noninteractive $APT_INSTALL \
         libsnappy-dev \
         protobuf-compiler \
         && \
-    $GIT_CLONE --branch 4.1.1 https://github.com/opencv/opencv ~/opencv && \
+    $GIT_CLONE --branch 4.1.2 https://github.com/opencv/opencv ~/opencv && \
     mkdir -p ~/opencv/build && cd ~/opencv/build && \
     cmake -D CMAKE_BUILD_TYPE=RELEASE \
           -D CMAKE_INSTALL_PREFIX=/usr/local \
@@ -229,7 +238,7 @@ RUN cd $SPARK_HOME/jars && \
 # ==================================================================
 # Polynote
 # ------------------------------------------------------------------
-ENV POLYNOTE_VERSION=0.2.11
+ENV POLYNOTE_VERSION=0.2.13
 ENV POLYNOTE_ARCHIVE=https://github.com/polynote/polynote/releases/download/$POLYNOTE_VERSION/polynote-dist.tar.gz
 RUN curl -sL $POLYNOTE_ARCHIVE | tar -zx -C /usr/local/
 ENV POLYNOTE_HOME /usr/local/polynote
