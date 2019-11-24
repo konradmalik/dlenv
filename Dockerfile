@@ -110,6 +110,7 @@ RUN $PIP_INSTALL \
 # ------------------------------------------------------------------
 RUN $PIP_INSTALL \
         nltk spacy && \
+        mkdir -p /usr/share/nltk_data && \
         python -d /usr/share/nltk_data -m nltk.downloader popular && \
         python -m spacy download en
 
