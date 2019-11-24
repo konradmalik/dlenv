@@ -286,8 +286,8 @@ RUN chmod +x /tini && chmod +x docker-entrypoint.sh
 ENTRYPOINT ["/tini", "--", "/docker-entrypoint.sh"]
 
 # copy run scripts
-COPY scripts/run-* .
-RUN chmod +x run-*
+COPY scripts/run-* /
+RUN chmod +x /run-*
 
 # run as non-root
 USER $DEFAULT_USER
