@@ -17,5 +17,5 @@ else
     echo "setting host to $SPARK_HOST"
     CMD="$CMD -h $SPARK_HOST"
 fi
-CMD="$CMD >> $SPARK_LOG/spark-master.out"
+echo "running: $CMD"
 exec $CMD 

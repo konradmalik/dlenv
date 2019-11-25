@@ -30,5 +30,5 @@ if [[ -z "${SPARK_WORKER_MEMORY}" ]]; then
 else
     CMD="$CMD -m $SPARK_WORKER_MEMORY"
 fi
-CMD="$CMD >> $SPARK_LOG/spark-master.out"
+echo "running: $CMD"
 exec $CMD

@@ -1,2 +1,3 @@
 #!/bin/bash
-cd && bash
+cd
+exec bash

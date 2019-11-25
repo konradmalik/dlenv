@@ -1,4 +1,4 @@
 #!/bin/bash
 
-/usr/local/polynote/polynote.py
+exec /usr/local/polynote/polynote.py
 
