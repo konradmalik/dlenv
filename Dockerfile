@@ -308,3 +308,5 @@ EXPOSE 7077
 EXPOSE 8081
 # polynote
 EXPOSE 8192
+
+CMD bash
