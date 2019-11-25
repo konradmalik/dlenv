@@ -17,14 +17,13 @@
 
 FROM ubuntu:18.04
 ENV LANG C.UTF-8
-ENV APT_INSTALL="apt-get install -y --no-install-recommends --fix-missing"
+ENV APT_INSTALL="apt-get update && apt-get install -y --no-install-recommends --fix-missing"
 ENV PIP_INSTALL="python -m pip --no-cache-dir install --upgrade"
 ENV GIT_CLONE="git clone --depth 10"
 
 RUN rm -rf /var/lib/apt/lists/* \
            /etc/apt/sources.list.d/cuda.list \
-           /etc/apt/sources.list.d/nvidia-ml.list && \
-    apt-get update
+           /etc/apt/sources.list.d/nvidia-ml.list
 
 # ==================================================================
 # tools
@@ -91,7 +90,6 @@ ENV JAVA_HOME /usr/lib/jvm/java-$JAVA_VERSION-openjdk-amd64
 # ==================================================================
 # jupyter hub
 # ------------------------------------------------------------------
-ENV JUPYTER_LAB_TOKEN=$DEFAULT_USER
 RUN DEBIAN_FRONTEND=noninteractive $APT_INSTALL \
     npm  nodejs && \
     npm install -g configurable-http-proxy && \
@@ -277,7 +275,13 @@ RUN ldconfig && \
 ENV DEFAULT_USER=dlenv
 COPY scripts/add-user.sh add-user.sh
 RUN chmod +x add-user.sh && ./add-user.sh $DEFAULT_USER
- 
+
+# make spark dir owned by that user
+RUN chown -R $DEFAULT_USER:$DEFAULT_USER $SPARK_HOME
+
+# make jupyter notebook token equal to username by default
+ENV JUPYTER_LAB_TOKEN=$DEFAULT_USER
+
 # Add Tini and entrypoint
 ENV TINI_VERSION v0.18.0
 ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
