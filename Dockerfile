@@ -17,6 +17,7 @@
 
 FROM ubuntu:18.04
 ENV LANG C.UTF-8
+ENV DEBIAN_FRONTEND=noninteractive
 ENV APT_INSTALL="apt-get update && apt-get install -y --no-install-recommends --fix-missing"
 ENV PIP_INSTALL="python -m pip --no-cache-dir install --upgrade"
 ENV GIT_CLONE="git clone --depth 10"
@@ -28,7 +29,7 @@ RUN rm -rf /var/lib/apt/lists/* \
 # ==================================================================
 # tools
 # ------------------------------------------------------------------
-RUN DEBIAN_FRONTEND=noninteractive $APT_INSTALL \
+RUN eval $APT_INSTALL \
         build-essential \
         apt-utils \
         ca-certificates \
@@ -46,11 +47,11 @@ RUN DEBIAN_FRONTEND=noninteractive $APT_INSTALL \
 # python
 # ------------------------------------------------------------------
 ENV PYTHON_COMPAT_VERSION=3.7
-RUN DEBIAN_FRONTEND=noninteractive $APT_INSTALL \
+RUN eval $APT_INSTALL \
         software-properties-common && \
 	add-apt-repository ppa:deadsnakes/ppa && \
     apt-get update && \
-	$APT_INSTALL \
+	eval $APT_INSTALL \
         python${PYTHON_COMPAT_VERSION} \
         python${PYTHON_COMPAT_VERSION}-dev \
         python3-distutils-extra \
@@ -79,7 +80,7 @@ RUN DEBIAN_FRONTEND=noninteractive $APT_INSTALL \
 # ------------------------------------------------------------------
 ENV JAVA_VERSION=8
 ENV SCALA_VERSION=2.11.12
-RUN DEBIAN_FRONTEND=noninteractive $APT_INSTALL \
+RUN eval $APT_INSTALL \
         openjdk-$JAVA_VERSION-jdk \
 		scala \
         && \
@@ -90,7 +91,7 @@ ENV JAVA_HOME /usr/lib/jvm/java-$JAVA_VERSION-openjdk-amd64
 # ==================================================================
 # jupyter hub
 # ------------------------------------------------------------------
-RUN DEBIAN_FRONTEND=noninteractive $APT_INSTALL \
+RUN eval $APT_INSTALL \
     npm  nodejs && \
     npm install -g configurable-http-proxy && \
     $PIP_INSTALL \
@@ -128,7 +129,7 @@ RUN $PIP_INSTALL \
 # ==================================================================
 # opencv
 # ------------------------------------------------------------------
-RUN DEBIAN_FRONTEND=noninteractive $APT_INSTALL \
+RUN eval $APT_INSTALL \
         libatlas-base-dev \
         libgflags-dev \
         libgoogle-glog-dev \
@@ -155,7 +156,7 @@ RUN DEBIAN_FRONTEND=noninteractive $APT_INSTALL \
 # ==================================================================
 # OpenAI GYM
 # ------------------------------------------------------------------
-RUN DEBIAN_FRONTEND=noninteractive $APT_INSTALL \
+RUN eval $APT_INSTALL \
         python3-dev \
         zlib1g-dev \
         libjpeg-dev \
