@@ -222,11 +222,14 @@ ENV AZURE_HADOOP_ARCHIVE=https://repo1.maven.org/maven2/org/apache/hadoop/hadoop
 # below version must be exact as maven says that above was compiled with!
 ENV AZURE_VERSION=7.0.0
 ENV AZURE_ARCHIVE=https://repo1.maven.org/maven2/com/microsoft/azure/azure-storage/$AZURE_VERSION/azure-storage-$AZURE_VERSION.jar
+# also add cassandra connector
+ENV SPARK_CASSANDRA_ARCHIVE=https://repo1.maven.org/maven2/com/datastax/spark/spark-cassandra-connector_2.11/2.4.2/spark-cassandra-connector_2.11-2.4.2.jar
 RUN cd $SPARK_HOME/jars && \
     curl -LO $AWS_ARCHIVE && \
     curl -LO $AWS_HADOOP_ARCHIVE && \
     curl -LO $AZURE_ARCHIVE && \
-    curl -LO $AZURE_HADOOP_ARCHIVE
+    curl -LO $AZURE_HADOOP_ARCHIVE && \
+    curl -LO $SPARK_CASSANDRA_ARCHIVE
 
 # Pyspark related stuff
 RUN $PIP_INSTALL koalas
