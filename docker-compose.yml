@@ -10,7 +10,6 @@ services:
   spark-master:
     image: konradmalik/dlenv:latest
     command: ./run-master.sh
-    user: "root:root"
     restart: unless-stopped
     ports:
       - 7077:7077
@@ -19,7 +18,6 @@ services:
   spark-worker:
     image: konradmalik/dlenv:latest
     command: ./run-worker.sh
-    user: "root:root"
     restart: unless-stopped
     environment:
         SPARK_MASTER: "spark://spark-master:7077"
