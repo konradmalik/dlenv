@@ -223,7 +223,7 @@ ENV AZURE_HADOOP_ARCHIVE=https://repo1.maven.org/maven2/org/apache/hadoop/hadoop
 ENV AZURE_VERSION=7.0.0
 ENV AZURE_ARCHIVE=https://repo1.maven.org/maven2/com/microsoft/azure/azure-storage/$AZURE_VERSION/azure-storage-$AZURE_VERSION.jar
 # also add cassandra connector
-ENV SPARK_CASSANDRA_ARCHIVE=https://repo1.maven.org/maven2/com/datastax/spark/spark-cassandra-connector_2.11/2.4.2/spark-cassandra-connector_2.11-2.4.2.jar
+ENV SPARK_CASSANDRA_ARCHIVE=http://dl.bintray.com/spark-packages/maven/datastax/spark-cassandra-connector/2.4.0-s_2.11/spark-cassandra-connector-2.4.0-s_2.11.jar
 RUN cd $SPARK_HOME/jars && \
     curl -LO $AWS_ARCHIVE && \
     curl -LO $AWS_HADOOP_ARCHIVE && \
