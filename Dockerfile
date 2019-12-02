@@ -194,12 +194,17 @@ RUN conda init && \
 # Spark (with pyspark and koalas)
 # ------------------------------------------------------------------
 # HADOOP
-ENV HADOOP_VERSION 2.7.7
+ENV HADOOP_VERSION 2.10.0
+ENV HADOOP_ARCHIVE=https://www-eu.apache.org/dist/hadoop/common/hadoop-$HADOOP_VERSION/hadoop-$HADOOP_VERSION.tar.gz
+ENV HADOOP_HOME /usr/local/hadoop-$HADOOP_VERSION
+ENV HADOOP_CONF_DIR=$HADOOP_HOME/etc/hadoop
+ENV PATH $PATH:$HADOOP_HOME/bin
+RUN curl -s $HADOOP_ARCHIVE | tar -xz -C /usr/local/
 
 # SPARK
 ENV SPARK_VERSION 2.4.4
-ENV SPARK_ARCHIVE=https://www-eu.apache.org/dist/spark/spark-$SPARK_VERSION/spark-$SPARK_VERSION-bin-hadoop2.7.tgz
-ENV SPARK_HOME /usr/local/spark-${SPARK_VERSION}-bin-hadoop2.7
+ENV SPARK_ARCHIVE=https://www-eu.apache.org/dist/spark/spark-$SPARK_VERSION/spark-$SPARK_VERSION-bin-without-hadoop.tgz
+ENV SPARK_HOME /usr/local/spark-${SPARK_VERSION}-bin-without-hadoop
 ENV SPARK_LOG=/tmp
 ENV SPARK_HOST=
 ENV SPARK_MASTER=
@@ -211,11 +216,11 @@ RUN curl -s $SPARK_ARCHIVE | tar -zx -C /usr/local/
 # add here jars necessary to use azure blob storage and amazon s3 with spark
 ENV AWS_HADOOP_ARCHIVE=https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/$HADOOP_VERSION/hadoop-aws-$HADOOP_VERSION.jar
 # below version must be exact as maven says that above was compiled with!
-ENV AWS_VERSION=1.7.4
+ENV AWS_VERSION=1.11.271
 ENV AWS_ARCHIVE=https://repo1.maven.org/maven2/com/amazonaws/aws-java-sdk/$AWS_VERSION/aws-java-sdk-$AWS_VERSION.jar
 ENV AZURE_HADOOP_ARCHIVE=https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-azure/$HADOOP_VERSION/hadoop-azure-$HADOOP_VERSION.jar
 # below version must be exact as maven says that above was compiled with!
-ENV AZURE_VERSION=2.0.0
+ENV AZURE_VERSION=7.0.0
 ENV AZURE_ARCHIVE=https://repo1.maven.org/maven2/com/microsoft/azure/azure-storage/$AZURE_VERSION/azure-storage-$AZURE_VERSION.jar
 # also add cassandra connector
 ENV SPARK_CASSANDRA_ARCHIVE=https://repo1.maven.org/maven2/com/datastax/spark/spark-cassandra-connector_2.11/2.4.2/spark-cassandra-connector_2.11-2.4.2.jar
