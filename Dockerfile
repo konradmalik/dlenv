@@ -122,7 +122,7 @@ RUN $PIP_INSTALL \
 # NLP tools
 # ------------------------------------------------------------------
 RUN $PIP_INSTALL \
-        nltk spacy && \
+        nltk spacy fuzzywuzzy && \
         python -m nltk.downloader popular -d /usr/share/nltk_data && \
         python -m spacy download en
 
@@ -222,11 +222,16 @@ ENV AZURE_HADOOP_ARCHIVE=https://repo1.maven.org/maven2/org/apache/hadoop/hadoop
 # below version must be exact as maven says that above was compiled with!
 ENV AZURE_VERSION=7.0.0
 ENV AZURE_ARCHIVE=https://repo1.maven.org/maven2/com/microsoft/azure/azure-storage/$AZURE_VERSION/azure-storage-$AZURE_VERSION.jar
+# also add cassandra connector and dependencies
+ENV SPARK_CASSANDRA_ARCHIVE=http://dl.bintray.com/spark-packages/maven/datastax/spark-cassandra-connector/2.4.0-s_2.11/spark-cassandra-connector-2.4.0-s_2.11.jar
+ENV TWITTER_ARCHIVE=https://repo1.maven.org/maven2/com/twitter/jsr166e/1.1.0/jsr166e-1.1.0.jar
 RUN cd $SPARK_HOME/jars && \
     curl -LO $AWS_ARCHIVE && \
     curl -LO $AWS_HADOOP_ARCHIVE && \
     curl -LO $AZURE_ARCHIVE && \
-    curl -LO $AZURE_HADOOP_ARCHIVE
+    curl -LO $AZURE_HADOOP_ARCHIVE && \
+    curl -LO $SPARK_CASSANDRA_ARCHIVE && \
+    curl -LO $TWITTER_ARCHIVE
 
 # Pyspark related stuff
 RUN $PIP_INSTALL koalas cassandra-driver
@@ -269,7 +274,7 @@ RUN $PIP_INSTALL \
 # ------------------------------------------------------------------
 RUN ldconfig && \
     apt-get clean && \
-    apt-get autoremove && \
+    apt-get -y autoremove && \
     rm -rf /var/lib/apt/lists/* /tmp/* ~/*
 
 # add default user
