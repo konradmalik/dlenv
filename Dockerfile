@@ -11,8 +11,7 @@
 # opencv                    4.1.1  (git)
 # OpenAI gym                latest (pip)
 # MLflow		            latest (pip)
-# Spark+koalas              2.4.4  (apt+pip)
-# polynote                  latest (github tar)
+# Spark+utility             2.4.3  (apt+pip)
 # ==================================================================
 
 FROM ubuntu:18.04
@@ -189,6 +188,10 @@ ENV PATH=${PATH}:/miniconda/bin
 RUN conda init && \
         conda config --set auto_activate_base false
 
+# ==================================================================
+# Analytics zoo
+# ------------------------------------------------------------------
+RUN $PIP_INSTALL analytics-zoo
 
 # ==================================================================
 # Spark (with pyspark and koalas)
@@ -202,7 +205,7 @@ ENV PATH $PATH:$HADOOP_HOME/bin
 RUN curl -s $HADOOP_ARCHIVE | tar -xz -C /usr/local/
 
 # SPARK
-ENV SPARK_VERSION 2.4.4
+ENV SPARK_VERSION 2.4.3
 ENV SPARK_ARCHIVE=https://www-eu.apache.org/dist/spark/spark-$SPARK_VERSION/spark-$SPARK_VERSION-bin-without-hadoop.tgz
 ENV SPARK_HOME /usr/local/spark-${SPARK_VERSION}-bin-without-hadoop
 ENV SPARK_LOG=/tmp
@@ -225,13 +228,16 @@ ENV AZURE_ARCHIVE=https://repo1.maven.org/maven2/com/microsoft/azure/azure-stora
 # also add cassandra connector and dependencies
 ENV SPARK_CASSANDRA_ARCHIVE=http://dl.bintray.com/spark-packages/maven/datastax/spark-cassandra-connector/2.4.0-s_2.11/spark-cassandra-connector-2.4.0-s_2.11.jar
 ENV TWITTER_ARCHIVE=https://repo1.maven.org/maven2/com/twitter/jsr166e/1.1.0/jsr166e-1.1.0.jar
+# add analytics zoo by intel
+ENV ANALYTICS_ZOO_ARCHIVE=https://repo1.maven.org/maven2/com/intel/analytics/zoo/analytics-zoo-bigdl_0.9.1-spark_$SPARK_VERSION/0.6.0/analytics-zoo-bigdl_0.9.1-spark_$SPARK_VERSION-0.6.0.jar
 RUN cd $SPARK_HOME/jars && \
     curl -LO $AWS_ARCHIVE && \
     curl -LO $AWS_HADOOP_ARCHIVE && \
     curl -LO $AZURE_ARCHIVE && \
     curl -LO $AZURE_HADOOP_ARCHIVE && \
     curl -LO $SPARK_CASSANDRA_ARCHIVE && \
-    curl -LO $TWITTER_ARCHIVE
+    curl -LO $TWITTER_ARCHIVE && \
+    curl -LO $ANALYTICS_ZOO_ARCHIVE
 
 # Pyspark related stuff
 RUN $PIP_INSTALL koalas
@@ -257,17 +263,6 @@ COPY scripts/almond-install.sh almond-install.sh
 RUN chmod +x almond-install.sh && \
     ./almond-install.sh && \ 
     rm -rf almond coursier almond-install.sh
-
-# ==================================================================
-# Polynote
-# ------------------------------------------------------------------
-ENV POLYNOTE_VERSION=0.2.13
-ENV POLYNOTE_ARCHIVE=https://github.com/polynote/polynote/releases/download/$POLYNOTE_VERSION/polynote-dist.tar.gz
-RUN curl -sL $POLYNOTE_ARCHIVE | tar -zx -C /usr/local/
-ENV POLYNOTE_HOME /usr/local/polynote
-
-RUN $PIP_INSTALL \ 
-    jep jedi virtualenv
 
 # ==================================================================
 # config & cleanup
@@ -316,5 +311,3 @@ EXPOSE 4040
 EXPOSE 7077
 # spark worker
 EXPOSE 8081
-# polynote
-EXPOSE 8192
