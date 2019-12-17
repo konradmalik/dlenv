@@ -240,7 +240,7 @@ RUN cd $SPARK_HOME/jars && \
     curl -LO $ANALYTICS_ZOO_ARCHIVE
 
 # Pyspark related stuff
-RUN $PIP_INSTALL koalas
+RUN $PIP_INSTALL koalas cassandra-driver
 # make sure your PYTHONPATH can find the PySpark and Py4J under $SPARK_HOME/python/lib:
 RUN cp $(ls $SPARK_HOME/python/lib/py4j*) $SPARK_HOME/python/lib/py4j-src.zip
 ENV PYTHONPATH $SPARK_HOME/python/lib/pyspark.zip:$SPARK_HOME/python/lib/py4j-src.zip:$PYTHONPATH
