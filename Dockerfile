@@ -205,7 +205,7 @@ ENV PATH $PATH:$HADOOP_HOME/bin
 RUN curl -s $HADOOP_ARCHIVE | tar -xz -C /usr/local/
 
 # SPARK
-ENV SPARK_VERSION 2.4.3
+ENV SPARK_VERSION 2.4.4
 ENV SPARK_ARCHIVE=https://www-eu.apache.org/dist/spark/spark-$SPARK_VERSION/spark-$SPARK_VERSION-bin-without-hadoop.tgz
 ENV SPARK_HOME /usr/local/spark-${SPARK_VERSION}-bin-without-hadoop
 ENV SPARK_LOG=/tmp
