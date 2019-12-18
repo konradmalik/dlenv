@@ -229,7 +229,7 @@ ENV AZURE_ARCHIVE=https://repo1.maven.org/maven2/com/microsoft/azure/azure-stora
 ENV SPARK_CASSANDRA_ARCHIVE=http://dl.bintray.com/spark-packages/maven/datastax/spark-cassandra-connector/2.4.0-s_2.11/spark-cassandra-connector-2.4.0-s_2.11.jar
 ENV TWITTER_ARCHIVE=https://repo1.maven.org/maven2/com/twitter/jsr166e/1.1.0/jsr166e-1.1.0.jar
 # add analytics zoo by intel
-ENV ANALYTICS_ZOO_ARCHIVE=https://repo1.maven.org/maven2/com/intel/analytics/zoo/analytics-zoo-bigdl_0.9.1-spark_$SPARK_VERSION/0.6.0/analytics-zoo-bigdl_0.9.1-spark_$SPARK_VERSION-0.6.0.jar
+ENV ANALYTICS_ZOO_ARCHIVE=https://repo1.maven.org/maven2/com/intel/analytics/zoo/analytics-zoo-bigdl_0.9.1-spark_2.4.3/0.6.0/analytics-zoo-bigdl_0.9.1-spark_2.4.3-0.6.0.jar
 RUN cd $SPARK_HOME/jars && \
     curl -LO $AWS_ARCHIVE && \
     curl -LO $AWS_HADOOP_ARCHIVE && \
