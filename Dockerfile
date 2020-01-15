@@ -121,7 +121,7 @@ RUN $PIP_INSTALL \
 # NLP tools
 # ------------------------------------------------------------------
 RUN $PIP_INSTALL \
-        nltk spacy fuzzywuzzy && \
+        nltk spacy fuzzywuzzy[speedup] && \
         python -m nltk.downloader popular -d /usr/share/nltk_data && \
         python -m spacy download en
 
