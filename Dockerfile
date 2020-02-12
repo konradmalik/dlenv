@@ -230,6 +230,8 @@ ENV SPARK_CASSANDRA_ARCHIVE=http://dl.bintray.com/spark-packages/maven/datastax/
 ENV TWITTER_ARCHIVE=https://repo1.maven.org/maven2/com/twitter/jsr166e/1.1.0/jsr166e-1.1.0.jar
 # add analytics zoo by intel
 ENV ANALYTICS_ZOO_ARCHIVE=https://repo1.maven.org/maven2/com/intel/analytics/zoo/analytics-zoo-bigdl_0.9.1-spark_2.4.3/0.6.0/analytics-zoo-bigdl_0.9.1-spark_2.4.3-0.6.0.jar
+# add spark excel support
+ENV SPARK_EXCEL_ARCHIVE=https://repo1.maven.org/maven2/com/crealytics/spark-excel_2.11/0.12.5/spark-excel_2.11-0.12.5.jar
 RUN cd $SPARK_HOME/jars && \
     curl -LO $AWS_ARCHIVE && \
     curl -LO $AWS_HADOOP_ARCHIVE && \
@@ -237,6 +239,7 @@ RUN cd $SPARK_HOME/jars && \
     curl -LO $AZURE_HADOOP_ARCHIVE && \
     curl -LO $SPARK_CASSANDRA_ARCHIVE && \
     curl -LO $TWITTER_ARCHIVE && \
+    curl -LO $SPARK_EXCEL_ARCHIVE && \
     curl -LO $ANALYTICS_ZOO_ARCHIVE
 
 # Pyspark related stuff
