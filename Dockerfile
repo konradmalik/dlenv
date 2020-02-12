@@ -232,6 +232,8 @@ ENV TWITTER_ARCHIVE=https://repo1.maven.org/maven2/com/twitter/jsr166e/1.1.0/jsr
 ENV ANALYTICS_ZOO_ARCHIVE=https://repo1.maven.org/maven2/com/intel/analytics/zoo/analytics-zoo-bigdl_0.9.1-spark_2.4.3/0.6.0/analytics-zoo-bigdl_0.9.1-spark_2.4.3-0.6.0.jar
 # add spark excel support
 ENV SPARK_EXCEL_ARCHIVE=https://repo1.maven.org/maven2/com/crealytics/spark-excel_2.11/0.12.5/spark-excel_2.11-0.12.5.jar
+ENV XMLBEANS_ARCHIVE=https://repo1.maven.org/maven2/org/apache/xmlbeans/xmlbeans/3.1.0/xmlbeans-3.1.0.jar
+ENV POI_OOXML_SCHEMAS_ARCHIVE=https://repo1.maven.org/maven2/org/apache/poi/poi-ooxml-schemas/4.1.1/poi-ooxml-schemas-4.1.1.jar
 RUN cd $SPARK_HOME/jars && \
     curl -LO $AWS_ARCHIVE && \
     curl -LO $AWS_HADOOP_ARCHIVE && \
