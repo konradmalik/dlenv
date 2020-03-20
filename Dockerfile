@@ -291,8 +291,8 @@ ENV JUPYTER_LAB_TOKEN=$DEFAULT_USER
 # Add Tini and entrypoint
 ENV TINI_VERSION v0.18.0
 ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
-COPY scripts/docker-entrypoint.sh .
-RUN chmod +x /tini && chmod +x docker-entrypoint.sh
+COPY scripts/docker-entrypoint.sh /docker-entrypoint.sh
+RUN chmod +x /tini && chmod +x /docker-entrypoint.sh
 ENTRYPOINT ["/tini", "--", "/docker-entrypoint.sh"]
 
 # copy run scripts
