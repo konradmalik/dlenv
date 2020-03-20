@@ -202,7 +202,7 @@ ENV HADOOP_ARCHIVE=https://www-eu.apache.org/dist/hadoop/common/hadoop-$HADOOP_V
 ENV HADOOP_HOME /usr/local/hadoop-$HADOOP_VERSION
 ENV HADOOP_CONF_DIR=$HADOOP_HOME/etc/hadoop
 ENV PATH $PATH:$HADOOP_HOME/bin
-RUN curl -s $HADOOP_ARCHIVE | tar xf - -C /usr/local/
+RUN curl -sL $HADOOP_ARCHIVE | tar xf - -C /usr/local/
 
 # SPARK
 ENV SPARK_VERSION 2.4.5
@@ -214,7 +214,7 @@ ENV SPARK_MASTER=
 ENV SPARK_WORKER_CORES=
 ENV SPARK_WORKER_MEMORY=
 ENV PATH $PATH:${SPARK_HOME}/bin
-RUN curl -s $SPARK_ARCHIVE | tar xf - -C /usr/local/
+RUN curl -sL $SPARK_ARCHIVE | tar xf - -C /usr/local/
 
 # add here jars necessary to use azure blob storage and amazon s3 with spark
 ENV AWS_HADOOP_ARCHIVE=https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/$HADOOP_VERSION/hadoop-aws-$HADOOP_VERSION.jar
