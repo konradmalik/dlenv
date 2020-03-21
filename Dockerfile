@@ -84,7 +84,7 @@ RUN eval $APT_INSTALL \
         openjdk-$JAVA_VERSION-jdk && \
     curl -LO www.scala-lang.org/files/archive/scala-$SCALA_VERSION.deb && \
 	dpkg -i scala-$SCALA_VERSION.deb && \
-    curl -LO https://bintray.com/sbt/debian/download_file?file_path=sbt-$SBT_VERSION.deb && \
+    curl -LO https://bintray.com/artifact/download/sbt/debian/sbt-$SBT_VERSION.deb && \
 	dpkg -i sbt-$SBT_VERSION.deb && \
     rm -rf *.deb && \
     $PIP_INSTALL \
