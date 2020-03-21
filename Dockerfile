@@ -78,7 +78,7 @@ RUN eval $APT_INSTALL \
 # Java and scala
 # ------------------------------------------------------------------
 ENV JAVA_VERSION=8
-ENV SCALA_VERSION=2.12.11
+ENV SCALA_VERSION=2.12.9
 RUN eval $APT_INSTALL \
         openjdk-$JAVA_VERSION-jdk \
 		scala \
