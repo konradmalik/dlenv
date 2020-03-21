@@ -79,10 +79,14 @@ RUN eval $APT_INSTALL \
 # ------------------------------------------------------------------
 ENV JAVA_VERSION=8
 ENV SCALA_VERSION=2.12.9
+ENV SBT_VERSION=1.3.8
 RUN eval $APT_INSTALL \
-        openjdk-$JAVA_VERSION-jdk \
-		scala \
-        && \
+        openjdk-$JAVA_VERSION-jdk && \
+    curl -LO www.scala-lang.org/files/archive/scala-$SCALA_VERSION.deb && \
+	dpkg -i scala-$SCALA_VERSION.deb && \
+    curl -LO https://bintray.com/sbt/debian/download_file?file_path=sbt-$SBT_VERSION.deb && \
+	dpkg -i sbt-$SBT_VERSION.deb && \
+    rm -rf *.deb && \
     $PIP_INSTALL \
         koalas
 ENV JAVA_HOME /usr/lib/jvm/java-$JAVA_VERSION-openjdk-amd64
