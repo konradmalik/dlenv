@@ -99,7 +99,8 @@ RUN eval $APT_INSTALL \
     npm install -g configurable-http-proxy && \
     $PIP_INSTALL \
         jupyterhub jupyterlab && \
-        jupyterhub --generate-config
+    mkdir -p /etc/jupyterhub
+COPY configs/jupyterhub_config.py /etc/jupyterhub/jupyterhub_config.py
 
 # ==================================================================
 # pytorch
