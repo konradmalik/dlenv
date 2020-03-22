@@ -254,6 +254,17 @@ RUN cp $(ls $SPARK_HOME/python/lib/py4j*) $SPARK_HOME/python/lib/py4j-src.zip
 ENV PYTHONPATH $SPARK_HOME/python/lib/pyspark.zip:$SPARK_HOME/python/lib/py4j-src.zip:$PYTHONPATH
 
 # ==================================================================
+# Polynote
+# ------------------------------------------------------------------
+ENV POLYNOTE_VERSION=0.3.3
+ENV POLYNOTE_ARCHIVE=https://github.com/polynote/polynote/releases/download/$POLYNOTE_VERSION/polynote-dist.tar.gz
+RUN curl -sL $POLYNOTE_ARCHIVE | tar -zx -C /usr/local/
+ENV POLYNOTE_HOME /usr/local/polynote
+
+RUN $PIP_INSTALL \ 
+    jep jedi virtualenv
+
+# ==================================================================
 # config & cleanup
 # ------------------------------------------------------------------
 RUN ldconfig && \
