@@ -8,7 +8,7 @@ services:
       - 8888:8888
 
   spark-master:
-    image: konradmalik/dlenv:latest
+    image: konradmalik/spark:latest
     command: ./run-master.sh
     restart: unless-stopped
     ports:
@@ -16,7 +16,7 @@ services:
       - 8080:8080
 
   spark-worker:
-    image: konradmalik/dlenv:latest
+    image: konradmalik/spark:latest
     command: ./run-worker.sh
     restart: unless-stopped
     environment:
