@@ -1,8 +1,6 @@
 # ==================================================================
 # module list
 # ------------------------------------------------------------------
-# python                    3.7    (apt)
-# java+scala                8;2.12 (apt)
 # jupyter hub+lab           latest (pip)
 # pytorch                   latest (pip)
 # ax                        latest (pip)
@@ -10,8 +8,11 @@
 # NLP (spacy, nltk)         latest (pip)
 # opencv                    4.1.1  (git)
 # OpenAI gym                latest (pip)
-# MLflow		            latest (pip)
-# Spark+utility             2.4.5  (apt+pip)
+# MLflow                    latest (pip)
+# DVC                       latest (pip)
+# Dask                      latest (pip)
+# Ray                       latest (pip)
+# Prefect                   latest (pip)
 # ==================================================================
 
 FROM konradmalik/spark:latest
@@ -47,8 +48,8 @@ COPY configs/jupyterhub_config.py /etc/jupyterhub/jupyterhub_config.py
 # ==================================================================
 # pytorch
 # ------------------------------------------------------------------
-ENV TORCHVISION_VERSION=0.5.0
-ENV TORCH_VERSION=1.4.0
+ENV TORCHVISION_VERSION=0.6.1
+ENV TORCH_VERSION=1.5.1
 RUN $PIP_INSTALL \
 		torch==$TORCH_VERSION+cpu torchvision==$TORCHVISION_VERSION+cpu -f https://download.pytorch.org/whl/torch_stable.html
 
@@ -86,7 +87,7 @@ RUN eval $APT_INSTALL \
         libsnappy-dev \
         protobuf-compiler \
         && \
-    $GIT_CLONE --branch 4.2.0 https://github.com/opencv/opencv ~/opencv && \
+    $GIT_CLONE --branch 4.4.0 https://github.com/opencv/opencv ~/opencv && \
     mkdir -p ~/opencv/build && cd ~/opencv/build && \
     cmake -D CMAKE_BUILD_TYPE=RELEASE \
           -D CMAKE_INSTALL_PREFIX=/usr/local \
@@ -136,15 +137,28 @@ RUN conda init && \
         conda config --set auto_activate_base false
 
 # ==================================================================
-# Polynote
+# DVC
 # ------------------------------------------------------------------
-ENV POLYNOTE_VERSION=0.3.3
-ENV POLYNOTE_ARCHIVE=https://github.com/polynote/polynote/releases/download/$POLYNOTE_VERSION/polynote-dist.tar.gz
-RUN curl -sL $POLYNOTE_ARCHIVE | tar -zx -C /usr/local/
-ENV POLYNOTE_HOME /usr/local/polynote
+RUN $PIP_INSTALL \
+        dvc
 
-RUN $PIP_INSTALL \ 
-    jep jedi virtualenv
+# ==================================================================
+# Dask
+# ------------------------------------------------------------------
+RUN $PIP_INSTALL \
+        "dask[complete]"
+
+# ==================================================================
+# Ray
+# ------------------------------------------------------------------
+RUN $PIP_INSTALL \
+        ray ray[debug]
+
+# ==================================================================
+# Prefect
+# ------------------------------------------------------------------
+RUN $PIP_INSTALL \
+        prefect
 
 # ==================================================================
 # config & cleanup
