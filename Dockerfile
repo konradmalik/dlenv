@@ -109,7 +109,7 @@ RUN eval $APT_INSTALL \
         libjpeg-dev \
         cmake \
         swig \
-        python-pyglet \
+        python3-pyglet \
         python3-opengl \
         libboost-all-dev \
         libsdl2-dev \
